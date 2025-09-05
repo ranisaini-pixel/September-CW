@@ -1,0 +1,23 @@
+{
+  "name": "friday-05-09",
+  "version": "1.0.0",
+  "description": "1. What is server\r 2. What is API and their types\r 3. What are URLs and read about all the part of of URL\r 4. Read the http module and implement the server in typescript having two route one is for welcome page on base URL and second is for the aboutMe (do not use express)",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "ts-node src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "http": "^0.0.1-security",
+    "nodemon": "^3.1.10"
+  }
+}

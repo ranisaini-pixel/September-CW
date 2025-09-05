@@ -1,0 +1,35 @@
+1. What is server
+2. What is API and their types
+3. What are URLs and read about all the part of of URL
+4. Read the http module and implement the server in typescript having two route one is for welcome page on base URL and second is for the aboutMe (do not use express)
+
+-> Server = A server is a program or computer that receives requests from clients and returns them. Also share resources with clients.
+
+-> Server store a lot of data and provide users can access to it over the internet.
+The Client send a request to a server, based on the request the server provides the information which collects from the database.
+
+-> 1. Proxy Server is a bridge between internet and devices, it helps in maintaining private network safe from cyberattack.
+
+-> 2. Forward and Reverse Proxy
+
+-> API =API stands for Application Programming Interface.APIs allows different software systems communicate with each other. An API defines how applications request services and exchange data, acting as a clear bridge between a client and a server.
+
+-> Types =
+
+1. Open (Public) APIs = Open APIs are APIs made available to the general public like nodemailer.
+
+2.Partner APIs = Partner APIs are shared with specific business partners and often require authentication and agreements. lilke Paystack
+
+3.Internal (Private) APIs = Internal APIs are used for internal communication within an organisation.
+
+4.Composite APIs = Composite APIs combine multiple API calls into a single request.like ecommerce website has product details, pricing , filtering, searching all in once.
+
+URL =A Uniform Resource Locator (URL) is the address of a unique resource on the internet. Sometimes alsocall web address.
+URLs can point to HTML files, CSS documents, images, API endpoints, and more.
+
+URLs are made up of several parts, and always include the scheme/protocol, domain name, and path to the file or resource. They may also include the port, parameters, and anchor:
+
+https://forum.freecodecamp.org/. = https is scheme/protocol, forum is sudomain, freecodecamp is second level domain(SLD),ORG, IN, COM are top level domain
+
+http module= The http module in Node.js is a core, built-in module that provides the functionality for creating and managing HTTP servers and clients.
+It is fundamental for building web applications and APIs in Node.js as it enables data transfer over the HyperText Transfer Protocol.
