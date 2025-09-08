@@ -1,0 +1,21 @@
+{
+  "name": "monday-08-09",
+  "version": "1.0.0",
+  "description": "// Create a server using HTTP module that perform the Simple CRUD",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "nodemon src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "author": "rani saini",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
