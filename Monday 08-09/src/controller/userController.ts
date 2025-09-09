@@ -10,7 +10,7 @@ export class UserController {
 
       if (!rollNo || !collegeName || !name || !course) {
         res.writeHead(400);
-        res.end(JSON.stringify({ message: "Required Data" }));
+        res.end(JSON.stringify({ message: "Required Data" })); //json formate
         return;
       }
 

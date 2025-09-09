@@ -1,0 +1,32 @@
+// Create a server using HTTP module that perform the Simple CRUD
+
+// 1. Register Student
+// RollNo
+// name
+// collegeName
+// course
+
+// 2.  Student detail
+// RollNo
+// name
+// collegeName
+// course
+
+// 3.  Edit Student detail
+// RollNo
+// name
+// collegeName
+// course
+
+// 4.  Delete Student
+
+
+// register
+// login
+// update(edit)
+// delete
+
+
+
+
+//task done, today used mongodb
