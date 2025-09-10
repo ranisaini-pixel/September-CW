@@ -1,0 +1,13 @@
+// cors
+// parser for requests
+// axios
+// bcrypt module in nodejs
+
+// Read above module and package and then implement it in below task
+// student dashboard
+// 1. register student details
+// 2. login
+// 3. list of students = getAllStudent
+// 4. detail of a particular student == getStudentById
+// 5. delete student permanently
+
