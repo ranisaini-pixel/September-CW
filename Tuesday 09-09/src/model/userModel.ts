@@ -12,18 +12,17 @@ const userSchema: Schema<IUser> = new Schema(
     rollNo: {
       type: Number,
       required: true,
-      trim: true,
-      sparse: true,
     },
     name: {
       type: String,
       required: true,
-      collegeName: { type: String, required: true },
+      trim: true,
     },
-    course: { type: String, required: true },
+    collegeName: { type: String, required: true, trim: true },
+    course: { type: String, required: true, trim: true },
   },
   { timestamps: true }
 );
 
-const UserModel = mongoose.model<IUser>("User", userSchema);
+const UserModel = mongoose.model<IUser>("User", userSchema); //move to contant
 export default UserModel;
