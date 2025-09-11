@@ -29,9 +29,9 @@ export const registerStudent = async (req: Request, res: Response) => {
           course,
         });
 
-        await newStudent.save();
+        let createdStudent = await newStudent.save();
 
-        if (!newStudent) {
+        if (!createdStudent) {
           return res.status(400).json({
             status: "error",
             message: "something went wrong while registering the student",
@@ -39,7 +39,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         }
         return res.status(201).json({
           message: "Student registered successfully",
-          user: newStudent,
+          user: createdStudent,
         });
       }
     }
@@ -77,10 +77,8 @@ export const loginStudent = async (req: Request, res: Response) => {
 
 export const getStudentById = async (req: Request, res: Response) => {
   try {
-    // const { _id } = req.query;
-    const { rollNo } = req.body;
-    // const student = await StudentModel.findById({ _id });
-    const student = await StudentModel.findOne({ rollNo });
+    const { _id } = req.query;
+    const student = await StudentModel.findById({ _id });
 
     if (!student) {
       return res.status(400).json({
