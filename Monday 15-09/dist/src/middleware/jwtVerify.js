@@ -27,8 +27,7 @@ const verifyJWT = async (req, res, next) => {
             return;
         }
         // Attach user to request
-        //   (res as any).locals.student=student
-        req.user = student;
+        res.locals.student = student;
         next();
     }
     catch (error) {

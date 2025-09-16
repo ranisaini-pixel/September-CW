@@ -4,6 +4,7 @@ export interface IStudent extends Document {
     name: string;
     password: string;
     collegeName: string;
+    token: string;
     course: string;
     country: mongoose.Schema.Types.ObjectId;
     state: mongoose.Schema.Types.ObjectId;

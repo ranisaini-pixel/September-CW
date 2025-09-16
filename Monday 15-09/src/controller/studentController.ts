@@ -7,6 +7,14 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+const isInvalid = (value: any): boolean => {
+  return (
+    !value ||
+    (typeof value === "string" && value.trim().length === 0) ||
+    (typeof value !== "string" && typeof value !== "number")
+  );
+};
+
 export const registerStudent = async (req: Request, res: Response) => {
   try {
     const {
@@ -20,67 +28,85 @@ export const registerStudent = async (req: Request, res: Response) => {
       city,
     } = req.body;
 
-    if (
-      !rollNo ||
-      !password ||
-      !name ||
-      !collegeName ||
-      !course ||
-      !country ||
-      !state ||
-      !city
-    ) {
+    if (isInvalid(rollNo)) {
+      return res
+        .status(400)
+        .json({ code: 400, message: "Roll number is required" });
+    }
+    if (isInvalid(password)) {
+      return res
+        .status(400)
+        .json({ code: 400, message: "Password is required" });
+    }
+    if (isInvalid(name)) {
+      return res.status(400).json({ code: 400, message: "Name is required" });
+    }
+    if (isInvalid(collegeName)) {
+      return res
+        .status(400)
+        .json({ code: 400, message: "College name is required" });
+    }
+    if (isInvalid(course)) {
+      return res.status(400).json({ code: 400, message: "Course is required" });
+    }
+    if (isInvalid(country)) {
+      return res
+        .status(400)
+        .json({ code: 400, message: "Country is required" });
+    }
+    if (isInvalid(state)) {
+      return res.status(400).json({ code: 400, message: "State is required" });
+    }
+    if (isInvalid(city)) {
+      return res.status(400).json({ code: 400, message: "City is required" });
+    }
+
+    const existedStudent = await studentModel.findOne({ rollNo });
+
+    if (existedStudent) {
       return res.status(400).json({
         code: 400,
-        message: "All fields are required",
+        message: "Student already exists",
       });
     } else {
-      const existedStudent = await studentModel.findOne({ rollNo });
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-      if (existedStudent) {
+      const newStudent: IStudent = new studentModel({
+        rollNo,
+        password: hashedPassword,
+        name,
+        collegeName,
+        course,
+        country,
+        state,
+        city,
+      });
+
+      await newStudent?.save();
+
+      const createdStudent = await studentModel
+        .findById(newStudent._id)
+        .select("-password");
+
+      if (!createdStudent) {
         return res.status(400).json({
           code: 400,
-          message: "Student already exists",
-        });
-      } else {
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newStudent: IStudent = new studentModel({
-          rollNo,
-          password: hashedPassword,
-          name,
-          collegeName,
-          course,
-          country,
-          state,
-          city,
-        });
-
-        await newStudent?.save();
-
-        const createdStudent = await studentModel
-          .findById(newStudent._id)
-          .select("-password");
-
-        if (!createdStudent) {
-          return res.status(400).json({
-            code: 400,
-            status: "error",
-            message: "something went wrong while registering the student",
-          });
-        }
-        return res.status(201).json({
-          code: 201,
-          message: "Student registered successfully",
-          student: createdStudent,
+          status: "error",
+          message: "something went wrong while registering the student",
         });
       }
+      return res.status(201).json({
+        code: 201,
+        message: "Student registered successfully",
+        student: createdStudent,
+      });
     }
   } catch (error: any) {
     console.log("Error:", error);
     res.status(400).json({
       code: 400,
       message: "Error registering student:",
+      error: error.message,
     });
   }
 };
@@ -130,20 +156,20 @@ export const loginStudent = async (req: Request, res: Response) => {
             },
             {
               new: true,
+              upsert: true,
             }
           );
-          console.log(updatedStudent, "oopo");
 
-          // const loggedInUser = await studentModel
-          //   .findById(existedStudent._id)
-          //   .select(
-          //     "-course -password -country -state -city -rollNo -createdAt -updatedAt"
-          //   );
+          const loggedInUser = await studentModel
+            .findById(existedStudent._id)
+            .select(
+              "-course -password -country -state -city -rollNo -createdAt -updatedAt"
+            );
 
           return res.status(201).json({
             code: 201,
             message: "Login successful",
-            data: updatedStudent,
+            data: loggedInUser,
           });
         }
       }
@@ -270,3 +296,100 @@ export const deleteStudent = async (req: Request, res: Response) => {
     });
   }
 };
+
+// const isInvalid = (value: any): boolean => {
+//   return (
+//     !value ||
+//     (typeof value === "string" && value.trim().length === 0) ||
+//     (typeof value !== "string" && typeof value !== "number")
+//   );
+// };
+
+// export const registerStudent = async (req: Request, res: Response) => {
+//   try {
+//     const {
+//       rollNo,
+//       password,
+//       name,
+//       collegeName,
+//       course,
+//       country,
+//       state,
+//       city,
+//     } = req.body;
+
+//
+//     if (isInvalid(rollNo)) {
+//       return res.status(400).json({ code: 400, message: "Roll number is required" });
+//     }
+//     if (isInvalid(password)) {
+//       return res.status(400).json({ code: 400, message: "Password is required" });
+//     }
+//     if (isInvalid(name)) {
+//       return res.status(400).json({ code: 400, message: "Name is required" });
+//     }
+//     if (isInvalid(collegeName)) {
+//       return res.status(400).json({ code: 400, message: "College name is required" });
+//     }
+//     if (isInvalid(course)) {
+//       return res.status(400).json({ code: 400, message: "Course is required" });
+//     }
+//     if (isInvalid(country)) {
+//       return res.status(400).json({ code: 400, message: "Country is required" });
+//     }
+//     if (isInvalid(state)) {
+//       return res.status(400).json({ code: 400, message: "State is required" });
+//     }
+//     if (isInvalid(city)) {
+//       return res.status(400).json({ code: 400, message: "City is required" });
+//     }
+
+//     // Check if student already exists
+//     const existedStudent = await studentModel.findOne({ rollNo: rollNo.trim() });
+//     if (existedStudent) {
+//       return res.status(400).json({ code: 400, message: "Student already exists" });
+//     }
+
+//     // Hash password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Create new student
+//     const newStudent: IStudent = new studentModel({
+//       rollNo: rollNo.toString().trim(),
+//       password: hashedPassword,
+//       name: name.trim(),
+//       collegeName: collegeName.trim(),
+//       course: course.trim(),
+//       country: country.trim(),
+//       state: state.trim(),
+//       city: city.trim(),
+//     });
+
+//     await newStudent.save();
+
+//     const createdStudent = await studentModel
+//       .findById(newStudent._id)
+//       .select("-password");
+
+//     if (!createdStudent) {
+//       return res.status(500).json({
+//         code: 500,
+//         status: "error",
+//         message: "Something went wrong while registering the student",
+//       });
+//     }
+
+//     return res.status(201).json({
+//       code: 201,
+//       message: "Student registered successfully",
+//       student: createdStudent,
+//     });
+//   } catch (error: any) {
+//     console.error("Error:", error);
+//     return res.status(500).json({
+//       code: 500,
+//       message: "Error registering student",
+//       error: error.message,
+//     });
+//   }
+// };

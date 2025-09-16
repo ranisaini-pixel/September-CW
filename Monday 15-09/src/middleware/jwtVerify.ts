@@ -21,8 +21,8 @@ export const verifyJWT = async (
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      res.status(402).json({
-        code: 402,
+      res.status(401).json({
+        code: 401,
         status: "failed",
         message: "Unauthorized request",
       });
@@ -38,17 +38,16 @@ export const verifyJWT = async (
     const student = await studentModel.findById(decodedTokenInfo.id);
 
     if (!student) {
-      res.status(404).json({
+      res.status(401).json({
+        code: 401,
         status: "failed",
-        message: "Invalid Access Token",
+        message: "Unauthorized request",
       });
       return;
     }
 
     // Attach user to request
-    //   (res as any).locals.student=student
-    (req as any).user = student;
-
+    res.locals.student = student;
     next();
   } catch (error: any) {
     res.status(401).json({
