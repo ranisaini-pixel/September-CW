@@ -1,9 +1,10 @@
 import studentModel, { IStudent } from "../models/studentModel";
 import { Request, Response } from "express";
-import { error } from "console";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
 
 dotenv.config();
 
@@ -64,10 +65,7 @@ export const registerStudent = async (req: Request, res: Response) => {
     const existedStudent = await studentModel.findOne({ rollNo });
 
     if (existedStudent) {
-      return res.status(400).json({
-        code: 400,
-        message: "Student already exists",
-      });
+      throw new ApiError(400, "Student already exists");
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -75,11 +73,11 @@ export const registerStudent = async (req: Request, res: Response) => {
         rollNo: rollNo.toString().trim(),
         password: hashedPassword,
         name: name.trim(),
-        collegeName: collegeName.trim(),
-        course: course.trim(),
-        country: country.trim(),
-        state: state.trim(),
-        city: city.trim(),
+        collegeName: collegeName.lowerCase().trim(),
+        course: course.lowerCase().trim(),
+        country: country.lowerCase().trim(),
+        state: state.lowerCase().trim(),
+        city: city.lowerCase().trim(),
       });
 
       await newStudent?.save();
@@ -89,25 +87,17 @@ export const registerStudent = async (req: Request, res: Response) => {
         .select("-password");
 
       if (!createdStudent) {
-        return res.status(400).json({
-          code: 400,
-          status: "error",
-          message: "something went wrong while registering the student",
-        });
+        throw new ApiError(400, "Student not created");
       }
-      return res.status(201).json({
-        code: 201,
-        message: "Student registered successfully",
-        student: createdStudent,
-      });
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, "Student created successfully", createdStudent)
+        );
     }
   } catch (error: any) {
     console.log("Error:", error);
-    res.status(400).json({
-      code: 400,
-      message: "Error registering student:",
-      error: error.message,
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -116,17 +106,12 @@ export const loginStudent = async (req: Request, res: Response) => {
     const { rollNo, password } = req.body;
 
     if (!(rollNo || password)) {
-      return res.status(400).json({
-        code: 400,
-        message: "Please provide username or email",
-      });
+      throw new ApiError(400, "Please provide username or email");
     } else {
       let existedStudent = await studentModel.findOne({ rollNo });
 
       if (!existedStudent) {
-        return res.status(400).json({
-          message: "Student not found",
-        });
+        throw new ApiError(400, "Student not found");
       } else {
         let isPasswordValidate = await bcrypt.compare(
           password,
@@ -134,10 +119,7 @@ export const loginStudent = async (req: Request, res: Response) => {
         );
 
         if (!isPasswordValidate) {
-          return res.status(401).json({
-            status: 401,
-            message: "Password Incorrect",
-          });
+          throw new ApiError(400, "Password Incorrect");
         } else {
           const token = jwt.sign(
             { id: existedStudent._id },
@@ -147,7 +129,7 @@ export const loginStudent = async (req: Request, res: Response) => {
             }
           );
 
-          let updatedStudent = await studentModel.findOneAndUpdate(
+          await studentModel.findOneAndUpdate(
             { rollNo },
             {
               $set: {
@@ -166,72 +148,49 @@ export const loginStudent = async (req: Request, res: Response) => {
               "-course -password -country -state -city -rollNo -createdAt -updatedAt"
             );
 
-          return res.status(201).json({
-            code: 201,
-            message: "Login successful",
-            data: loggedInUser,
-          });
+          return res
+            .status(200)
+            .json(new ApiResponse(200, "Login Successful", loggedInUser));
         }
       }
     }
   } catch (error: any) {
     console.log("Error:", error);
-    res.status(500).json({
-      code: 500,
-      message: "Internal Server Error:",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
 export const getStudentById = async (req: Request, res: Response) => {
   try {
-    const { _id } = req.query;
-    const student = await studentModel.findById({ _id });
+    const student = await studentModel.findById(res.locals.student._id);
 
     if (!student) {
-      return res.status(400).json({
-        message: "Student not found",
-      });
+      throw new ApiError(400, "Student not found");
     } else {
-      return res.status(201).json({
-        message: "Student Details",
-        student: student,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Student Details", student));
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      code: error,
-      message: "Error getting student",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
 export const getStudentList = async (req: Request, res: Response) => {
   try {
-    const studentsList = await studentModel
-      .find()
-      .populate("country", "name")
-      .populate("state", "name")
-      .populate("city", "name")
-      .exec();
+    const studentsList = await studentModel.find();
 
     if (!studentsList) {
-      return res.status(400).json({
-        message: "Students not found",
-      });
+      throw new ApiError(400, "Student not found");
     } else {
-      return res.status(201).json({
-        message: "Student Details",
-        studentsList,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "All Student List", studentsList));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      code: 500,
-      message: "Error getting student List",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -257,21 +216,15 @@ export const updateStudent = async (req: Request, res: Response) => {
       .select("-password");
 
     if (!updatedStudent) {
-      return res.status(400).json({
-        message: "Student not found",
-      });
+      throw new ApiError(400, "Student not found");
     } else {
-      return res.status(201).json({
-        message: "Student updated",
-        updatedStudent: updatedStudent,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Student Details Updated", updateStudent));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      code: 500,
-      message: "Error updating student",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -281,115 +234,15 @@ export const deleteStudent = async (req: Request, res: Response) => {
 
     const deleted = await studentModel.deleteOne({ _id });
 
-    if (!deleted) {
-      return res.status(400).json({
-        message: "Student not found",
-      });
+    if (deleted.deletedCount === 0) {
+      throw new ApiError(400, "Student not found");
     } else {
-      return res.status(201).json({
-        message: "Student deleted",
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Student Deleted Successfully", null));
     }
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Error deleting user",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
-
-// const isInvalid = (value: any): boolean => {
-//   return (
-//     !value ||
-//     (typeof value === "string" && value.trim().length === 0) ||
-//     (typeof value !== "string" && typeof value !== "number")
-//   );
-// };
-
-// export const registerStudent = async (req: Request, res: Response) => {
-//   try {
-//     const {
-//       rollNo,
-//       password,
-//       name,
-//       collegeName,
-//       course,
-//       country,
-//       state,
-//       city,
-//     } = req.body;
-
-//
-//     if (isInvalid(rollNo)) {
-//       return res.status(400).json({ code: 400, message: "Roll number is required" });
-//     }
-//     if (isInvalid(password)) {
-//       return res.status(400).json({ code: 400, message: "Password is required" });
-//     }
-//     if (isInvalid(name)) {
-//       return res.status(400).json({ code: 400, message: "Name is required" });
-//     }
-//     if (isInvalid(collegeName)) {
-//       return res.status(400).json({ code: 400, message: "College name is required" });
-//     }
-//     if (isInvalid(course)) {
-//       return res.status(400).json({ code: 400, message: "Course is required" });
-//     }
-//     if (isInvalid(country)) {
-//       return res.status(400).json({ code: 400, message: "Country is required" });
-//     }
-//     if (isInvalid(state)) {
-//       return res.status(400).json({ code: 400, message: "State is required" });
-//     }
-//     if (isInvalid(city)) {
-//       return res.status(400).json({ code: 400, message: "City is required" });
-//     }
-
-//     // Check if student already exists
-//     const existedStudent = await studentModel.findOne({ rollNo: rollNo.trim() });
-//     if (existedStudent) {
-//       return res.status(400).json({ code: 400, message: "Student already exists" });
-//     }
-
-//     // Hash password
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     // Create new student
-//     const newStudent: IStudent = new studentModel({
-//       rollNo: rollNo.toString().trim(),
-//       password: hashedPassword,
-//       name: name.trim(),
-//       collegeName: collegeName.trim(),
-//       course: course.trim(),
-//       country: country.trim(),
-//       state: state.trim(),
-//       city: city.trim(),
-//     });
-
-//     await newStudent.save();
-
-//     const createdStudent = await studentModel
-//       .findById(newStudent._id)
-//       .select("-password");
-
-//     if (!createdStudent) {
-//       return res.status(500).json({
-//         code: 500,
-//         status: "error",
-//         message: "Something went wrong while registering the student",
-//       });
-//     }
-
-//     return res.status(201).json({
-//       code: 201,
-//       message: "Student registered successfully",
-//       student: createdStudent,
-//     });
-//   } catch (error: any) {
-//     console.error("Error:", error);
-//     return res.status(500).json({
-//       code: 500,
-//       message: "Error registering student",
-//       error: error.message,
-//     });
-//   }
-// };

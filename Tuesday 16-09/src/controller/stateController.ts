@@ -1,22 +1,19 @@
 import stateModel, { IState } from "../models/stateModel";
 import { Request, Response } from "express";
-import { error } from "console";
+import { ApiResponse } from "../utils/ApiResponse";
+import { ApiError } from "../utils/ApiError";
 
 export const createState = async (req: Request, res: Response) => {
   try {
     const { name, countryId } = req.body;
 
     if (!name || !countryId) {
-      return res.status(400).json({
-        message: "All Fields are required",
-      });
+      throw new ApiError(400, "All Fields are required");
     } else {
       const existedState = await stateModel.findOne({ name });
 
       if (existedState) {
-        return res.status(400).json({
-          message: "State already exists",
-        });
+        throw new ApiError(400, "State already exists");
       } else {
         const newState: IState = new stateModel({
           name,
@@ -26,22 +23,21 @@ export const createState = async (req: Request, res: Response) => {
         let createdState = await newState.save();
 
         if (!createdState) {
-          return res.status(400).json({
-            status: "error",
-            message: "something went wrong while creating the state",
-          });
+          throw new ApiError(
+            400,
+            "something went wrong while creating the state"
+          );
         }
-        return res.status(201).json({
-          message: "State created successfully",
-          state: createdState,
-        });
+        return res
+          .status(200)
+          .json(
+            new ApiResponse(200, "State created successfully", createState)
+          );
       }
     }
   } catch (error: any) {
-    console.log("Error: ", error);
-    res.status(400).json({
-      message: "Error creating state:",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -50,47 +46,31 @@ export const getStateList = async (req: Request, res: Response) => {
     const stateList = await stateModel.find();
 
     if (!stateList) {
-      return res.status(400).json({
-        message: "states are not found",
-      });
+      throw new ApiError(400, "states not found");
     } else {
-      return res.status(201).json({
-        message: "state Details",
-        stateList,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "States List", stateList));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error getting state List",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
 export const getStateById = async (req: Request, res: Response) => {
   try {
     const { _id } = req.query;
-    const state = await stateModel
-      .findById({ _id })
-      .populate({ path: "country", strictPopulate: false })
-      .exec();
-    console.log(state, "74");
+    const state = await stateModel.findById({ _id });
 
     if (!state) {
-      return res.status(400).json({
-        message: "state not found",
-      });
+      throw new ApiError(400, "state not found");
     } else {
-      return res.status(201).json({
-        message: "State Details",
-        state,
-      });
+      return res.status(200).json(new ApiResponse(200, "State details", state));
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error getting state",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -109,20 +89,15 @@ export const updateState = async (req: Request, res: Response) => {
     );
 
     if (!updatedState) {
-      return res.status(400).json({
-        message: "State not found",
-      });
+      throw new ApiError(400, "State not found");
     } else {
-      return res.status(201).json({
-        message: "State Detail updated",
-        updatedState,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "State details updated", updatedState));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error updating states",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -133,17 +108,14 @@ export const deleteState = async (req: Request, res: Response) => {
     const deleted = await stateModel.deleteOne({ name });
 
     if (deleted.deletedCount === 0) {
-      return res.status(400).json({
-        message: "State not found",
-      });
+      throw new ApiError(400, "State not found");
     } else {
-      return res.status(201).json({
-        message: "State deleted",
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "State deleted successfully", null));
     }
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Error deleting country",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };

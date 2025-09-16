@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const verifyJWT = async (req, res, next) => {
     try {
-        const token = req.header("Authorization")?.replace("Bearer ", "");
+        const token = req.headers.authorization?.replace("Bearer ", "");
         if (!token) {
             res.status(402).json({
                 code: 402,
@@ -19,16 +19,16 @@ const verifyJWT = async (req, res, next) => {
         // Verify token
         const decodedTokenInfo = jwt.verify(token, process.env.PRIVATE_KEY);
         const student = await studentModel_1.default.findById(decodedTokenInfo.id);
+        console.log(student, "details");
         if (!student) {
-            res.status(404).json({
+            res.status(402).json({
                 status: "failed",
-                message: "Invalid Access Token",
+                message: "Unauthorized Token",
             });
             return;
         }
         // Attach user to request
-        //   (res as any).locals.student=student
-        req.user = student;
+        res.locals.student = student;
         next();
     }
     catch (error) {

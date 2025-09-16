@@ -22,6 +22,9 @@ const stateSchema = new mongoose_1.Schema({
         required: true,
         trim: true,
     },
+    token: {
+        type: String,
+    },
     course: {
         type: String,
         required: true,

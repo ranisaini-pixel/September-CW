@@ -1,22 +1,19 @@
 import countryModel, { ICountry } from "../models/countryModel";
 import { Request, Response } from "express";
-import { error } from "console";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
 
 export const createCountry = async (req: Request, res: Response) => {
   try {
     const { name } = req.body;
 
     if (!name) {
-      return res.status(400).json({
-        message: "Name is required",
-      });
+      throw new ApiError(400, "Name is required");
     } else {
       const existedCountry = await countryModel.findOne({ name });
 
       if (existedCountry) {
-        return res.status(400).json({
-          message: "Country already exists",
-        });
+        throw new ApiError(400, "Country already exists");
       } else {
         const newCountry: ICountry = new countryModel({
           name,
@@ -25,22 +22,21 @@ export const createCountry = async (req: Request, res: Response) => {
         let createdCountry = await newCountry.save();
 
         if (!createdCountry) {
-          return res.status(400).json({
-            status: "error",
-            message: "something went wrong while creating the country",
-          });
+          throw new ApiError(
+            400,
+            "something went wrong while creating the country"
+          );
         }
-        return res.status(201).json({
-          message: "Country created successfully",
-          country: createdCountry,
-        });
+        return res
+          .status(200)
+          .json(
+            new ApiResponse(200, "Country created successfully", createCountry)
+          );
       }
     }
   } catch (error: any) {
-    console.log("Error: ", error);
-    res.status(400).json({
-      message: "Error creating country:",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -49,20 +45,15 @@ export const getCountryList = async (req: Request, res: Response) => {
     const countryList = await countryModel.find();
 
     if (!countryList) {
-      return res.status(400).json({
-        message: "Countries are not found",
-      });
+      throw new ApiError(400, "Countries are not found");
     } else {
-      return res.status(201).json({
-        message: "Country Details",
-        countryList,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Countries List", countryList));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error getting country List",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -72,20 +63,15 @@ export const getCountryById = async (req: Request, res: Response) => {
     const country = await countryModel.findById({ _id });
 
     if (!country) {
-      return res.status(400).json({
-        message: "Country not found",
-      });
+      throw new ApiError(400, "Country not found");
     } else {
-      return res.status(201).json({
-        message: "Country Details",
-        country,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Country Details", country));
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error getting country",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -104,20 +90,15 @@ export const updateCountry = async (req: Request, res: Response) => {
     );
 
     if (!updatedCountry) {
-      return res.status(400).json({
-        message: "Country not found",
-      });
+      throw new ApiError(400, "Country not found");
     } else {
-      return res.status(201).json({
-        message: "Country Detail updated",
-        updatedCountry,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Country details updated", updateCountry));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error updating country",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -128,17 +109,14 @@ export const deleteCountry = async (req: Request, res: Response) => {
     const deleted = await countryModel.deleteOne({ name });
 
     if (deleted.deletedCount === 0) {
-      return res.status(400).json({
-        message: "Country not found",
-      });
+      throw new ApiError(400, "Country not found");
     } else {
-      return res.status(201).json({
-        message: "Country deleted",
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Country deleted successfully", null));
     }
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Error deleting country",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };

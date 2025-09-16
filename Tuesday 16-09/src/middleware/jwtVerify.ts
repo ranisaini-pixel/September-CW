@@ -3,6 +3,8 @@ import studentModel from "../models/studentModel";
 import * as jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
 
 dotenv.config();
 
@@ -18,15 +20,10 @@ export const verifyJWT = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
+    const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (!token) {
-      res.status(402).json({
-        code: 402,
-        status: "failed",
-        message: "Unauthorized request",
-      });
-      return;
+      throw new ApiError(401, "Unauthorized request");
     }
 
     // Verify token
@@ -38,21 +35,18 @@ export const verifyJWT = async (
     const student = await studentModel.findById(decodedTokenInfo.id);
 
     if (!student) {
-      res.status(404).json({
-        status: "failed",
-        message: "Invalid Access Token",
-      });
-      return;
+      throw new ApiError(401, "Unauthorized request");
+    }
+
+    if (token !== student?.token) {
+      throw new ApiError(401, "Unauthorized request");
     }
 
     // Attach user to request
     res.locals.student = student;
     next();
   } catch (error: any) {
-    res.status(401).json({
-      status: "failed",
-      error: error?.message,
-      message: "Invalid Access Token",
-    });
+    console.log("Error:", error);
+    res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };

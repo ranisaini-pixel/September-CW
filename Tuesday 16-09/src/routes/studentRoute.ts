@@ -14,9 +14,11 @@ const router: Router = Router();
 
 router.post("/createStudent", registerStudent);
 router.get("/loginStudent", loginStudent);
-router.get("/getSudent", verifyJWT, getStudentById);
-router.get("/getStudentList", verifyJWT, getStudentList);
-router.put("/updateStudent/:_id", verifyJWT, updateStudent);
-router.delete("/deleteStudent/:_id", verifyJWT, deleteStudent);
+
+router.use(verifyJWT);
+router.get("/getSudent", getStudentById);
+router.get("/getStudentList", getStudentList);
+router.put("/updateStudent/:_id", updateStudent);
+router.delete("/deleteStudent/:_id", deleteStudent);
 
 export default router;

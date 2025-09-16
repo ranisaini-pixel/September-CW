@@ -1,22 +1,19 @@
 import cityModel, { ICity } from "../models/cityModel";
 import { Request, Response } from "express";
-import { error } from "console";
+import { ApiResponse } from "../utils/ApiResponse";
+import { ApiError } from "../utils/ApiError";
 
 export const createCity = async (req: Request, res: Response) => {
   try {
     const { name, stateName } = req.body;
 
     if (!name || !stateName) {
-      return res.status(400).json({
-        message: "All Fields are required",
-      });
+      throw new ApiError(400, "name and stateName required");
     } else {
       const existedCity = await cityModel.findOne({ name });
 
       if (existedCity) {
-        return res.status(400).json({
-          message: "City already exists",
-        });
+        throw new ApiError(400, "City already exists");
       } else {
         const newCity: ICity = new cityModel({
           name,
@@ -26,73 +23,52 @@ export const createCity = async (req: Request, res: Response) => {
         let createdCity = await newCity.save();
 
         if (!createdCity) {
-          return res.status(400).json({
-            status: "error",
-            message: "something went wrong while creating the city",
-          });
+          throw new ApiError(
+            400,
+            "something went wrong while creating the city"
+          );
         }
-        return res.status(201).json({
-          message: "City created successfully",
-          country: createdCity,
-        });
+        return res
+          .status(200)
+          .json(new ApiResponse(200, "City created successfully", createCity));
       }
     }
   } catch (error: any) {
-    console.log("Error: ", error);
-    res.status(400).json({
-      message: "Error creating city:",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
 export const getCityList = async (req: Request, res: Response) => {
   try {
-    const cityList = await cityModel
-      .find()
-      .populate({ path: "country", strictPopulate: false })
-      .exec();
+    const cityList = await cityModel.find();
 
     if (!cityList) {
-      return res.status(400).json({
-        message: "Cities are not found",
-      });
+      throw new ApiError(400, "Cities are not found");
     } else {
-      return res.status(201).json({
-        message: "City Details",
-        cityList,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Cities List", cityList));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error getting country List",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
 export const getCityByName = async (req: Request, res: Response) => {
   try {
     const { _id } = req.query;
-    const city = await cityModel
-      .findById({ _id })
-      .populate({ path: "State", strictPopulate: false })
-      .exec();
+    const city = await cityModel.findById({ _id });
 
     if (!city) {
-      return res.status(400).json({
-        message: "City not found",
-      });
+      throw new ApiError(400, "City not found");
     } else {
-      return res.status(201).json({
-        message: "City Details",
-        city,
-      });
+      return res.status(200).json(new ApiResponse(200, "City Details", city));
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error getting city",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -111,20 +87,15 @@ export const updateCity = async (req: Request, res: Response) => {
     );
 
     if (!updatedCity) {
-      return res.status(400).json({
-        message: "City not found",
-      });
+      throw new ApiError(400, "City not found");
     } else {
-      return res.status(201).json({
-        message: "City Detail updated",
-        updatedCity,
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "City updated successfully", updateCity));
     }
-  } catch {
+  } catch (error: any) {
     console.log("Error:", error);
-    return res.status(500).json({
-      message: "Error updating city",
-    });
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };
 
@@ -135,17 +106,14 @@ export const deleteCity = async (req: Request, res: Response) => {
     const deleted = await cityModel.deleteOne({ name });
 
     if (deleted.deletedCount === 0) {
-      return res.status(400).json({
-        message: "City not found",
-      });
+      throw new ApiError(400, "City not found");
     } else {
-      return res.status(201).json({
-        message: "City deleted",
-      });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "City deleted successfully", deleteCity));
     }
   } catch (error: any) {
-    return res.status(500).json({
-      message: "Error deleting city",
-    });
+    console.log("Error:", error);
+    return res.status(400).json(new ApiResponse(400, error.message, null));
   }
 };

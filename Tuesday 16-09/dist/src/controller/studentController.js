@@ -122,24 +122,21 @@ const loginStudent = async (req, res) => {
                     const token = jwt.sign({ id: existedStudent._id }, process.env.PRIVATE_KEY, {
                         expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
                     });
-                    let updatedStudent = await studentModel_1.default.findOneAndUpdate({ rollNo }, {
+                    await studentModel_1.default.findOneAndUpdate({ rollNo }, {
                         $set: {
                             token: token,
                         },
                     }, {
-                        upsert: false,
-                        runValidators: true,
+                        new: true,
+                        upsert: true,
                     });
-                    console.log(updatedStudent, "oopo");
-                    // const loggedInUser = await studentModel
-                    //   .findById(existedStudent._id)
-                    //   .select(
-                    //     "-course -password -country -state -city -rollNo -createdAt -updatedAt"
-                    //   );
-                    return res.status(201).json({
-                        code: 201,
+                    const loggedInUser = await studentModel_1.default
+                        .findById(existedStudent._id)
+                        .select("-course -password -country -state -city -rollNo -createdAt -updatedAt");
+                    return res.status(200).json({
+                        code: 200,
                         message: "Login successful",
-                        data: updatedStudent,
+                        data: loggedInUser,
                     });
                 }
             }

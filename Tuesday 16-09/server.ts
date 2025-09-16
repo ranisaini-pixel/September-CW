@@ -6,12 +6,30 @@ import stateRoute from "./src/routes/stateRoute";
 import cityRoute from "./src/routes/cityRoute";
 import { MONGO_URI } from "./constant";
 import * as dotenv from "dotenv";
+import * as cors from "cors";
+import * as cookieparser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
 
-app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
+
+app.use(
+  express.json({
+    limit: "16kb",
+  })
+);
+
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+
+app.use(express.static("public"));
+app.use(cookieparser());
 
 // const PORT = 8000;
 
