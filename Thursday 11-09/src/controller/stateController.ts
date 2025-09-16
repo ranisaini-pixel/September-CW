@@ -23,6 +23,7 @@ export const createState = async (req: Request, res: Response) => {
           countryName,
         });
 
+        //wrong country
         let createdState = await newState.save();
 
         if (!createdState) {
@@ -77,7 +78,6 @@ export const getStateByName = async (req: Request, res: Response) => {
       .findById({ _id })
       .populate({ path: "country", strictPopulate: false })
       .exec();
-    console.log(state, "74");
 
     if (!state) {
       return res.status(400).json({

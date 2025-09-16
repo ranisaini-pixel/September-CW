@@ -16,7 +16,7 @@ const stateSchema: Schema<IState> = new Schema(
     countryName: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Country",
+        ref: "Country", //countries
         required: true,
       },
     ],

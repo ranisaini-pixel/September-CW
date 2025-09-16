@@ -21,7 +21,10 @@ const citySchema: Schema<ICity> = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    collection: "cities",
+  }
 );
 
 const cityModel = mongoose.model<ICity>("City", citySchema);

@@ -94,6 +94,7 @@ export const searchCountryByName = async (req: Request, res: Response) => {
     const { name } = req.query;
     const countryName = await countryModel.find({ name });
 
+    //fix it
     if (!countryName) {
       return res.status(400).json({
         message: "Country not found",
@@ -126,6 +127,7 @@ export const updateCountry = async (req: Request, res: Response) => {
       { new: true }
     );
 
+    //if country already exist show apropriate msg
     if (!updatedCountry) {
       return res.status(400).json({
         message: "Country not found",

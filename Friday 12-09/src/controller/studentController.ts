@@ -53,13 +53,9 @@ export const registerStudent = async (req: Request, res: Response) => {
           city,
         });
 
-        const createdStudent = await studentModel
-          .findById(newStudent._id)
-          .select("-password");
+        await newStudent?.save();
 
-        console.log(createdStudent, "eeeee");
-
-        if (!createdStudent) {
+        if (!newStudent) {
           return res.status(400).json({
             code: 400,
             status: "error",
@@ -69,7 +65,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         return res.status(201).json({
           code: 201,
           message: "Student registered successfully",
-          student: createdStudent,
+          student: newStudent,
         });
       }
     }

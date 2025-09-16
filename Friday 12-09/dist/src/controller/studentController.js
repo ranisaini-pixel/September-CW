@@ -40,8 +40,8 @@ const registerStudent = async (req, res) => {
                     state,
                     city,
                 });
-                let createdStudent = await newStudent.save();
-                if (!createdStudent) {
+                await newStudent?.save();
+                if (!newStudent) {
                     return res.status(400).json({
                         code: 400,
                         status: "error",
@@ -51,7 +51,7 @@ const registerStudent = async (req, res) => {
                 return res.status(201).json({
                     code: 201,
                     message: "Student registered successfully",
-                    student: createdStudent,
+                    student: newStudent,
                 });
             }
         }
