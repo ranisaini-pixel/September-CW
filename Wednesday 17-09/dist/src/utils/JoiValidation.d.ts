@@ -1,9 +1,22 @@
 import * as Joi from "joi";
 export declare const registerStudentValidation: Joi.ObjectSchema<any>;
 export declare const loginStudentValidation: Joi.ObjectSchema<any>;
+export declare const updateStudentParamsValidation: Joi.ObjectSchema<any>;
 export declare const updateStudentValidation: Joi.ObjectSchema<any>;
+export declare const deleteStudentParamsValidation: Joi.ObjectSchema<any>;
 export declare const createCountryValidation: Joi.ObjectSchema<any>;
-export declare const deleteCountryValidation: Joi.ObjectSchema<any>;
+export declare const getCountryByIdQueryValidation: Joi.ObjectSchema<any>;
+export declare const updateCountryParamsValidation: Joi.ObjectSchema<any>;
+export declare const updateCountryValidation: Joi.ObjectSchema<any>;
+export declare const deleteCountryParamsValidation: Joi.ObjectSchema<any>;
 export declare const createStateValidation: Joi.ObjectSchema<any>;
+export declare const getStateByIdQueryValidation: Joi.ObjectSchema<any>;
+export declare const updateStateParamsValidation: Joi.ObjectSchema<any>;
+export declare const updateStateValidation: Joi.ObjectSchema<any>;
+export declare const deleteStateParamsValidation: Joi.ObjectSchema<any>;
 export declare const createCityValidation: Joi.ObjectSchema<any>;
+export declare const getCityByNameQueryValidation: Joi.ObjectSchema<any>;
+export declare const updateCityParamsValidation: Joi.ObjectSchema<any>;
+export declare const updateCityValidation: Joi.ObjectSchema<any>;
+export declare const deleteCityParamsValidation: Joi.ObjectSchema<any>;
 //# sourceMappingURL=JoiValidation.d.ts.map

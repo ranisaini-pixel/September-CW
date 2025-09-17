@@ -38,7 +38,7 @@ export const loginStudentValidation = Joi.object({
   }),
 });
 
-export const updateStudentParamsValidation = Joi.object({
+export const updateValidation = Joi.object({
   _id: Joi.string().hex().length(24).required().messages({
     "string.empty": "_id is required",
     "string.hex": "_id must be a valid hex string",
@@ -58,7 +58,21 @@ export const updateStudentValidation = Joi.object({
   city: Joi.string().trim(),
 });
 
-export const deleteStudentParamsValidation = Joi.object({
+export const updateCSCValidation = Joi.object({
+  name: Joi.string().trim(),
+  countryId: Joi.string().hex().length(24).messages({
+    "string.empty": "_id is required",
+    "string.hex": "_id must be a valid hex string",
+    "string.length": "_id must be 24 characters long",
+  }),
+  stateId: Joi.string().hex().length(24).messages({
+    "string.empty": "_id is required",
+    "string.hex": "_id must be a valid hex string",
+    "string.length": "_id must be 24 characters long",
+  }),
+});
+
+export const deleteStudentValidation = Joi.object({
   _id: Joi.string().hex().length(24).required().messages({
     "string.empty": "_id is required",
     "string.hex": "_id must be a valid hex string",
@@ -72,7 +86,7 @@ export const createCountryValidation = Joi.object({
   }),
 });
 
-export const getCountryByIdQueryValidation = Joi.object({
+export const getByIdValidation = Joi.object({
   _id: Joi.string().hex().length(24).required().messages({
     "string.empty": "_id is required",
     "string.hex": "_id must be a valid hex string",
@@ -80,19 +94,7 @@ export const getCountryByIdQueryValidation = Joi.object({
   }),
 });
 
-export const updateCountryParamsValidation = Joi.object({
-  _id: Joi.string().hex().length(24).required().messages({
-    "string.empty": "_id is required",
-    "string.hex": "_id must be a valid hex string",
-    "string.length": "_id must be 24 characters long",
-  }),
-});
-
-export const updateCountryValidation = Joi.object({
-  name: Joi.string().trim(),
-});
-
-export const deleteCountryParamsValidation = Joi.object({
+export const deleteCSCValidation = Joi.object({
   name: Joi.string().hex().length(24).required().messages({
     "string.empty": "name is required",
   }),
@@ -107,64 +109,12 @@ export const createStateValidation = Joi.object({
   }),
 });
 
-export const getStateByIdQueryValidation = Joi.object({
-  _id: Joi.string().hex().length(24).required().messages({
-    "string.empty": "_id is required",
-    "string.hex": "_id must be a valid hex string",
-    "string.length": "_id must be 24 characters long",
-  }),
-});
-
-export const updateStateParamsValidation = Joi.object({
-  _id: Joi.string().hex().length(24).required().messages({
-    "string.empty": "_id is required",
-    "string.hex": "_id must be a valid hex string",
-    "string.length": "_id must be 24 characters long",
-  }),
-});
-
-export const updateStateValidation = Joi.object({
-  name: Joi.string().trim(),
-});
-
-export const deleteStateParamsValidation = Joi.object({
-  name: Joi.string().hex().length(24).required().messages({
-    "string.empty": "name is required",
-  }),
-});
-
 export const createCityValidation = Joi.object({
   name: Joi.string().required().messages({
     "string.empty": "name is required",
   }),
   stateId: Joi.string().required().messages({
     "string.empty": "State Id is required",
-  }),
-});
-
-export const getCityByNameQueryValidation = Joi.object({
-  _id: Joi.string().hex().length(24).required().messages({
-    "string.empty": "_id is required",
-    "string.hex": "_id must be a valid hex string",
-    "string.length": "_id must be 24 characters long",
-  }),
-});
-
-export const updateCityParamsValidation = Joi.object({
-  _id: Joi.string().hex().length(24).required().messages({
-    "string.empty": "_id is required",
-    "string.hex": "_id must be a valid hex string",
-    "string.length": "_id must be 24 characters long",
-  }),
-});
-
-export const updateCityValidation = Joi.object({
-  name: Joi.string().trim(),
-});
-
-export const deleteCityParamsValidation = Joi.object({
-  name: Joi.string().required().messages({
-    "string.empty": "name is required",
   }),
 });
 

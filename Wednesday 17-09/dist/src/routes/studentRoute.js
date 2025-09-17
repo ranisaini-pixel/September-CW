@@ -11,7 +11,7 @@ router.get("/loginStudent", (0, ValidateSchema_1.validate)(JoiValidation_1.login
 router.use(jwtVerify_1.verifyJWT);
 router.get("/getSudent", studentController_1.getStudentById);
 router.get("/getStudentList", studentController_1.getStudentList);
-router.put("/updateStudent/:_id", (0, ValidateSchema_1.validate)(JoiValidation_1.updateStudentValidation), studentController_1.updateStudent);
-router.delete("/deleteStudent/:_id", studentController_1.deleteStudent);
+router.put("/updateStudent/:_id", (0, ValidateSchema_1.paramsValidator)(JoiValidation_1.updateStudentParamsValidation), (0, ValidateSchema_1.validate)(JoiValidation_1.updateStudentValidation), studentController_1.updateStudent);
+router.delete("/deleteStudent/:_id", (0, ValidateSchema_1.paramsValidator)(JoiValidation_1.deleteStudentParamsValidation), studentController_1.deleteStudent);
 exports.default = router;
 //# sourceMappingURL=studentRoute.js.map

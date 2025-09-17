@@ -39,14 +39,6 @@ const registerStudent = async (req, res, next) => {
         else {
             const hashedPassword = await bcrypt.hash(password, 10);
             const newStudent = new studentModel_1.default({
-                // rollNo: rollNo,
-                // password: hashedPassword,
-                // name: name.trim(),
-                // collegeName: collegeName,
-                // course: course,
-                // country: country,
-                // state: state,
-                // city: city,
                 rollNo: rollNo,
                 password: hashedPassword,
                 name: name.trim(),
@@ -61,11 +53,11 @@ const registerStudent = async (req, res, next) => {
                 .findById(newStudent._id)
                 .select("-password");
             if (!createdStudent) {
-                throw new ApiError_1.ApiError(400, "Student not created");
+                return next(new ApiError_1.ApiError(400, "Student not created"));
             }
             return res
-                .status(200)
-                .json(new ApiResponse_1.ApiResponse(200, "Student created successfully", createdStudent));
+                .status(201)
+                .json(new ApiResponse_1.ApiResponse(201, "Student created successfully", createdStudent));
         }
     }
     catch (error) {
@@ -80,17 +72,17 @@ const loginStudent = async (req, res) => {
     try {
         const { rollNo, password } = req.body;
         if (!(rollNo || password)) {
-            throw new ApiError_1.ApiError(400, "Please provide username or email");
+            return next(new ApiError_1.ApiError(400, "Please provide username and email"));
         }
         else {
             let existedStudent = await studentModel_1.default.findOne({ rollNo });
             if (!existedStudent) {
-                throw new ApiError_1.ApiError(400, "Student not found");
+                return next(new ApiError_1.ApiError(400, "Student not found"));
             }
             else {
                 let isPasswordValidate = await bcrypt.compare(password, existedStudent.password);
                 if (!isPasswordValidate) {
-                    throw new ApiError_1.ApiError(400, "Password Incorrect");
+                    return next(new ApiError_1.ApiError(400, "Password Incorrect"));
                 }
                 else {
                     const token = jwt.sign({ id: existedStudent._id }, process.env.PRIVATE_KEY, {
@@ -116,7 +108,7 @@ const loginStudent = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.loginStudent = loginStudent;
@@ -124,7 +116,7 @@ const getStudentById = async (req, res) => {
     try {
         const student = await studentModel_1.default.findById(res.locals.student._id);
         if (!student) {
-            throw new ApiError_1.ApiError(400, "Student not found");
+            return next(new ApiError_1.ApiError(400, "Student not found"));
         }
         else {
             return res
@@ -134,7 +126,7 @@ const getStudentById = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.getStudentById = getStudentById;
@@ -142,7 +134,7 @@ const getStudentList = async (req, res) => {
     try {
         const studentsList = await studentModel_1.default.find();
         if (!studentsList) {
-            throw new ApiError_1.ApiError(400, "Student not found");
+            return next(new ApiError_1.ApiError(400, "Student not found"));
         }
         else {
             return res
@@ -152,7 +144,7 @@ const getStudentList = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.getStudentList = getStudentList;
@@ -172,18 +164,19 @@ const updateStudent = async (req, res) => {
             },
         }, { new: true })
             .select("-password");
+        let updatedStudentData = await studentModel_1.default.findById({ _id });
         if (!updatedStudent) {
-            throw new ApiError_1.ApiError(400, "Student not found");
+            return next(new ApiError_1.ApiError(400, "Student not found"));
         }
         else {
             return res
                 .status(200)
-                .json(new ApiResponse_1.ApiResponse(200, "Student Details Updated", exports.updateStudent));
+                .json(new ApiResponse_1.ApiResponse(200, "Student Details Updated", updatedStudentData));
         }
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.updateStudent = updateStudent;
@@ -192,7 +185,7 @@ const deleteStudent = async (req, res) => {
         const { _id } = req.params;
         const deleted = await studentModel_1.default.deleteOne({ _id });
         if (deleted.deletedCount === 0) {
-            throw new ApiError_1.ApiError(400, "Student not found");
+            return next(new ApiError_1.ApiError(400, "Student not found"));
         }
         else {
             return res
@@ -202,8 +195,11 @@ const deleteStudent = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.deleteStudent = deleteStudent;
+function next(arg0) {
+    throw new Error("Function not implemented.");
+}
 //# sourceMappingURL=studentController.js.map

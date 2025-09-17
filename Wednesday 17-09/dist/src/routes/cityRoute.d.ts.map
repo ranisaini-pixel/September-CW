@@ -1,1 +1,1 @@
-{"version":3,"file":"cityRoute.d.ts","sourceRoot":"","sources":["../../../src/routes/cityRoute.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAWjC,QAAA,MAAM,MAAM,EAAE,MAAiB,CAAC;AAQhC,eAAe,MAAM,CAAC"}
+{"version":3,"file":"cityRoute.d.ts","sourceRoot":"","sources":["../../../src/routes/cityRoute.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAqBjC,QAAA,MAAM,MAAM,EAAE,MAAiB,CAAC;AAqBhC,eAAe,MAAM,CAAC"}

@@ -8,12 +8,12 @@ const createCity = async (req, res) => {
     try {
         const { name, stateId } = req.body;
         if (!name || !stateId) {
-            throw new ApiError_1.ApiError(400, "name and stateId required");
+            return next(new ApiError_1.ApiError(400, "name and stateId required"));
         }
         else {
             const existedCity = await cityModel_1.default.findOne({ name });
             if (existedCity) {
-                throw new ApiError_1.ApiError(400, "City already exists");
+                return next(new ApiError_1.ApiError(400, "City already exists"));
             }
             else {
                 const newCity = new cityModel_1.default({
@@ -22,17 +22,17 @@ const createCity = async (req, res) => {
                 });
                 let createdCity = await newCity.save();
                 if (!createdCity) {
-                    throw new ApiError_1.ApiError(400, "something went wrong while creating the city");
+                    return next(new ApiError_1.ApiError(400, "something went wrong while creating the city"));
                 }
                 return res
-                    .status(200)
-                    .json(new ApiResponse_1.ApiResponse(200, "City created successfully", exports.createCity));
+                    .status(201)
+                    .json(new ApiResponse_1.ApiResponse(201, "City created successfully", createdCity));
             }
         }
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.createCity = createCity;
@@ -40,7 +40,7 @@ const getCityList = async (req, res) => {
     try {
         const cityList = await cityModel_1.default.find();
         if (!cityList) {
-            throw new ApiError_1.ApiError(400, "Cities are not found");
+            return next(new ApiError_1.ApiError(400, "Cities are not found"));
         }
         else {
             return res
@@ -50,7 +50,7 @@ const getCityList = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.getCityList = getCityList;
@@ -59,7 +59,7 @@ const getCityByName = async (req, res) => {
         const { _id } = req.query;
         const city = await cityModel_1.default.findById({ _id });
         if (!city) {
-            throw new ApiError_1.ApiError(400, "City not found");
+            return next(new ApiError_1.ApiError(400, "City not found"));
         }
         else {
             return res.status(200).json(new ApiResponse_1.ApiResponse(200, "City Details", city));
@@ -67,7 +67,7 @@ const getCityByName = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.getCityByName = getCityByName;
@@ -80,7 +80,7 @@ const updateCity = async (req, res) => {
             },
         }, { new: true });
         if (!updatedCity) {
-            throw new ApiError_1.ApiError(400, "City not found");
+            return next(new ApiError_1.ApiError(400, "City not found"));
         }
         else {
             return res
@@ -90,7 +90,7 @@ const updateCity = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.updateCity = updateCity;
@@ -99,7 +99,7 @@ const deleteCity = async (req, res) => {
         const { name } = req.params;
         const deleted = await cityModel_1.default.deleteOne({ name });
         if (deleted.deletedCount === 0) {
-            throw new ApiError_1.ApiError(400, "City not found");
+            return next(new ApiError_1.ApiError(400, "City not found"));
         }
         else {
             return res
@@ -109,8 +109,11 @@ const deleteCity = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.deleteCity = deleteCity;
+function next(arg0) {
+    throw new Error("Function not implemented.");
+}
 //# sourceMappingURL=cityController.js.map

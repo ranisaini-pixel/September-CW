@@ -2,41 +2,41 @@ import { Router } from "express";
 import {
   createCity,
   deleteCity,
-  getCityByName,
+  getCityById,
   getCityList,
   updateCity,
 } from "../controller/cityController";
 import {
-  paramsValidator,
-  queryvalidator,
-  validate,
-} from "../middleware/ValidateSchema";
-import {
   createCityValidation,
-  deleteCityParamsValidation,
-  getCityByNameQueryValidation,
-  updateCityParamsValidation,
-  updateCityValidation,
+  deleteCSCValidation,
+  getByIdValidation,
+  updateCSCValidation,
+  updateValidation,
 } from "../utils/JoiValidation";
+import { globalValidator } from "../middleware/globalValidationHandler";
 
 const router: Router = Router();
 
-router.post("/saveCity", validate(createCityValidation), createCity);
+router.post(
+  "/saveCity",
+  globalValidator(createCityValidation, "body"),
+  createCity
+);
 router.get(
   "/getCityDetail",
-  queryvalidator(getCityByNameQueryValidation),
-  getCityByName
+  globalValidator(getByIdValidation, "query"),
+  getCityById
 );
 router.get("/getCityList", getCityList);
 router.put(
   "/update/:_id",
-  paramsValidator(updateCityParamsValidation),
-  validate(updateCityValidation),
+  globalValidator(updateValidation, "params"),
+  globalValidator(updateCSCValidation, "body"),
   updateCity
 );
 router.delete(
   "/delete/:name",
-  paramsValidator(deleteCityParamsValidation),
+  globalValidator(deleteCSCValidation, "params"),
   deleteCity
 );
 

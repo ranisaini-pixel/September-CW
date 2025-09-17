@@ -10,39 +10,39 @@ import {
 
 import { verifyJWT } from "../middleware/jwtVerify";
 import {
-  paramsValidator,
-  queryvalidator,
-  validate,
-} from "../middleware/ValidateSchema";
-import {
-  deleteStudentParamsValidation,
+  deleteStudentValidation,
   loginStudentValidation,
   registerStudentValidation,
-  updateStudentParamsValidation,
   updateStudentValidation,
+  updateValidation,
 } from "../utils/JoiValidation";
+import { globalValidator } from "../middleware/globalValidationHandler";
 
 const router: Router = Router();
 
 router.post(
   "/createStudent",
-  validate(registerStudentValidation),
+  globalValidator(registerStudentValidation, "body"),
   registerStudent
 );
-router.get("/loginStudent", validate(loginStudentValidation), loginStudent);
+router.get(
+  "/loginStudent",
+  globalValidator(loginStudentValidation, "body"),
+  loginStudent
+);
 
 router.use(verifyJWT);
 router.get("/getSudent", getStudentById);
 router.get("/getStudentList", getStudentList);
 router.put(
   "/updateStudent/:_id",
-  paramsValidator(updateStudentParamsValidation),
-  validate(updateStudentValidation),
+  globalValidator(updateValidation, "params"),
+  globalValidator(updateStudentValidation, "body"),
   updateStudent
 );
 router.delete(
   "/deleteStudent/:_id",
-  paramsValidator(deleteStudentParamsValidation),
+  globalValidator(deleteStudentValidation, "params"),
   deleteStudent
 );
 

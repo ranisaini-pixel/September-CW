@@ -8,12 +8,12 @@ const createCountry = async (req, res) => {
     try {
         const { name } = req.body;
         if (!name) {
-            throw new ApiError_1.ApiError(400, "Name is required");
+            return next(new ApiError_1.ApiError(400, "Name is required"));
         }
         else {
             const existedCountry = await countryModel_1.default.findOne({ name });
             if (existedCountry) {
-                throw new ApiError_1.ApiError(400, "Country already exists");
+                return next(new ApiError_1.ApiError(400, "Country already exists"));
             }
             else {
                 const newCountry = new countryModel_1.default({
@@ -21,17 +21,17 @@ const createCountry = async (req, res) => {
                 });
                 let createdCountry = await newCountry.save();
                 if (!createdCountry) {
-                    throw new ApiError_1.ApiError(400, "something went wrong while creating the country");
+                    return next(new ApiError_1.ApiError(400, "something went wrong while creating the country"));
                 }
                 return res
-                    .status(200)
-                    .json(new ApiResponse_1.ApiResponse(200, "Country created successfully", createdCountry));
+                    .status(201)
+                    .json(new ApiResponse_1.ApiResponse(201, "Country created successfully", createdCountry));
             }
         }
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.createCountry = createCountry;
@@ -39,7 +39,7 @@ const getCountryList = async (req, res) => {
     try {
         const countryList = await countryModel_1.default.find();
         if (!countryList) {
-            throw new ApiError_1.ApiError(400, "Countries are not found");
+            return next(new ApiError_1.ApiError(400, "Countries are not found"));
         }
         else {
             return res
@@ -49,7 +49,7 @@ const getCountryList = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.getCountryList = getCountryList;
@@ -58,7 +58,7 @@ const getCountryById = async (req, res) => {
         const { _id } = req.query;
         const country = await countryModel_1.default.findById({ _id });
         if (!country) {
-            throw new ApiError_1.ApiError(400, "Country not found");
+            return next(new ApiError_1.ApiError(400, "Country not found"));
         }
         else {
             return res
@@ -68,7 +68,7 @@ const getCountryById = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.getCountryById = getCountryById;
@@ -81,7 +81,7 @@ const updateCountry = async (req, res) => {
             },
         }, { new: true });
         if (!updatedCountry) {
-            throw new ApiError_1.ApiError(400, "Country not found");
+            return next(new ApiError_1.ApiError(400, "Country not found"));
         }
         else {
             return res
@@ -91,7 +91,7 @@ const updateCountry = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.updateCountry = updateCountry;
@@ -100,7 +100,7 @@ const deleteCountry = async (req, res) => {
         const { name } = req.params;
         const deleted = await countryModel_1.default.deleteOne({ name });
         if (deleted.deletedCount === 0) {
-            throw new ApiError_1.ApiError(400, "Country not found");
+            return next(new ApiError_1.ApiError(400, "Country not found"));
         }
         else {
             return res
@@ -110,8 +110,11 @@ const deleteCountry = async (req, res) => {
     }
     catch (error) {
         console.log("Error:", error);
-        return res.status(400).json(new ApiResponse_1.ApiResponse(400, error.message, null));
+        next(error);
     }
 };
 exports.deleteCountry = deleteCountry;
+function next(arg0) {
+    throw new Error("Function not implemented.");
+}
 //# sourceMappingURL=countryController.js.map

@@ -59,15 +59,6 @@ export const registerStudent = async (
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const newStudent: IStudent = new studentModel({
-        // rollNo: rollNo,
-        // password: hashedPassword,
-        // name: name.trim(),
-        // collegeName: collegeName,
-        // course: course,
-        // country: country,
-        // state: state,
-        // city: city,
-
         rollNo: rollNo,
         password: hashedPassword,
         name: name.trim(),
@@ -85,12 +76,12 @@ export const registerStudent = async (
         .select("-password");
 
       if (!createdStudent) {
-        throw new ApiError(400, "Student not created");
+        return next(new ApiError(400, "Student not created"));
       }
       return res
-        .status(200)
+        .status(201)
         .json(
-          new ApiResponse(200, "Student created successfully", createdStudent)
+          new ApiResponse(201, "Student created successfully", createdStudent)
         );
     }
   } catch (error: any) {
@@ -106,12 +97,12 @@ export const loginStudent = async (req: Request, res: Response) => {
     const { rollNo, password } = req.body;
 
     if (!(rollNo || password)) {
-      throw new ApiError(400, "Please provide username or email");
+      return next(new ApiError(400, "Please provide username and email"));
     } else {
       let existedStudent = await studentModel.findOne({ rollNo });
 
       if (!existedStudent) {
-        throw new ApiError(400, "Student not found");
+        return next(new ApiError(400, "Student not found"));
       } else {
         let isPasswordValidate = await bcrypt.compare(
           password,
@@ -119,7 +110,7 @@ export const loginStudent = async (req: Request, res: Response) => {
         );
 
         if (!isPasswordValidate) {
-          throw new ApiError(400, "Password Incorrect");
+          return next(new ApiError(400, "Password Incorrect"));
         } else {
           const token = jwt.sign(
             { id: existedStudent._id },
@@ -156,7 +147,7 @@ export const loginStudent = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -165,7 +156,7 @@ export const getStudentById = async (req: Request, res: Response) => {
     const student = await studentModel.findById(res.locals.student._id);
 
     if (!student) {
-      throw new ApiError(400, "Student not found");
+      return next(new ApiError(400, "Student not found"));
     } else {
       return res
         .status(200)
@@ -173,7 +164,7 @@ export const getStudentById = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -182,7 +173,7 @@ export const getStudentList = async (req: Request, res: Response) => {
     const studentsList = await studentModel.find();
 
     if (!studentsList) {
-      throw new ApiError(400, "Student not found");
+      return next(new ApiError(400, "Student not found"));
     } else {
       return res
         .status(200)
@@ -190,7 +181,7 @@ export const getStudentList = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -218,7 +209,7 @@ export const updateStudent = async (req: Request, res: Response) => {
     let updatedStudentData = await studentModel.findById({ _id });
 
     if (!updatedStudent) {
-      throw new ApiError(400, "Student not found");
+      return next(new ApiError(400, "Student not found"));
     } else {
       return res
         .status(200)
@@ -228,7 +219,7 @@ export const updateStudent = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -239,7 +230,7 @@ export const deleteStudent = async (req: Request, res: Response) => {
     const deleted = await studentModel.deleteOne({ _id });
 
     if (deleted.deletedCount === 0) {
-      throw new ApiError(400, "Student not found");
+      return next(new ApiError(400, "Student not found"));
     } else {
       return res
         .status(200)
@@ -247,6 +238,9 @@ export const deleteStudent = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
+function next(arg0: ApiError) {
+  throw new Error("Function not implemented.");
+}

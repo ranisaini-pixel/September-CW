@@ -8,12 +8,12 @@ export const createState = async (req: Request, res: Response) => {
     const { name, countryId } = req.body;
 
     if (!name || !countryId) {
-      throw new ApiError(400, "All Fields are required");
+      return next(new ApiError(400, "name and countryId required"));
     } else {
       const existedState = await stateModel.findOne({ name });
 
       if (existedState) {
-        throw new ApiError(400, "State already exists");
+        return next(new ApiError(400, "State already exists"));
       } else {
         const newState: IState = new stateModel({
           name,
@@ -23,21 +23,20 @@ export const createState = async (req: Request, res: Response) => {
         let createdState = await newState.save();
 
         if (!createdState) {
-          throw new ApiError(
-            400,
-            "something went wrong while creating the state"
+          return next(
+            new ApiError(400, "something went wrong while creating the state")
           );
         }
         return res
-          .status(200)
+          .status(201)
           .json(
-            new ApiResponse(200, "State created successfully", createdState)
+            new ApiResponse(201, "State created successfully", createdState)
           );
       }
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -46,7 +45,7 @@ export const getStateList = async (req: Request, res: Response) => {
     const stateList = await stateModel.find();
 
     if (!stateList) {
-      throw new ApiError(400, "states not found");
+      return next(new ApiError(400, "States not found"));
     } else {
       return res
         .status(200)
@@ -54,7 +53,7 @@ export const getStateList = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -64,13 +63,13 @@ export const getStateById = async (req: Request, res: Response) => {
     const state = await stateModel.findById({ _id });
 
     if (!state) {
-      throw new ApiError(400, "state not found");
+      return next(new ApiError(400, "state not found"));
     } else {
       return res.status(200).json(new ApiResponse(200, "State details", state));
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -89,7 +88,7 @@ export const updateState = async (req: Request, res: Response) => {
     );
 
     if (!updatedState) {
-      throw new ApiError(400, "State not found");
+      return next(new ApiError(400, "State not found"));
     } else {
       return res
         .status(200)
@@ -97,7 +96,7 @@ export const updateState = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
 
@@ -108,7 +107,7 @@ export const deleteState = async (req: Request, res: Response) => {
     const deleted = await stateModel.deleteOne({ name });
 
     if (deleted.deletedCount === 0) {
-      throw new ApiError(400, "State not found");
+      return next(new ApiError(400, "State not found"));
     } else {
       return res
         .status(200)
@@ -116,6 +115,9 @@ export const deleteState = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     console.log("Error:", error);
-    return res.status(400).json(new ApiResponse(400, error.message, null));
+    next(error);
   }
 };
+function next(arg0: ApiError) {
+  throw new Error("Function not implemented.");
+}

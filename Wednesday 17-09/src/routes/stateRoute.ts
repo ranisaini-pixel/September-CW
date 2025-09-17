@@ -6,37 +6,38 @@ import {
   getStateList,
   updateState,
 } from "../controller/stateController";
-import {
-  paramsValidator,
-  queryvalidator,
-  validate,
-} from "../middleware/ValidateSchema";
+
 import {
   createStateValidation,
-  deleteStateParamsValidation,
-  getStateByIdQueryValidation,
-  updateStateParamsValidation,
-  updateStateValidation,
+  updateValidation,
+  updateCSCValidation,
+  deleteCSCValidation,
+  getByIdValidation,
 } from "../utils/JoiValidation";
+import { globalValidator } from "../middleware/globalValidationHandler";
 
 const router: Router = Router();
 
-router.post("/saveState", validate(createStateValidation), createState);
+router.post(
+  "/saveState",
+  globalValidator(createStateValidation, "body"),
+  createState
+);
 router.get(
   "/getStateDetail",
-  queryvalidator(getStateByIdQueryValidation),
+  globalValidator(getByIdValidation, "query"),
   getStateById
 );
 router.get("/getStateList", getStateList);
 router.put(
   "/updateState/:_id",
-  paramsValidator(updateStateParamsValidation),
-  validate(updateStateValidation),
+  globalValidator(updateValidation, "params"),
+  globalValidator(updateCSCValidation, "body"),
   updateState
 );
 router.delete(
   "/deleteState/:name",
-  paramsValidator(deleteStateParamsValidation),
+  globalValidator(deleteCSCValidation, "params"),
   deleteState
 );
 
