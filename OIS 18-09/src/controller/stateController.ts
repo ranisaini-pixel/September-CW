@@ -50,7 +50,22 @@ export const getStateList = async (
   next: NextFunction
 ) => {
   try {
-    const stateList = await stateModel.find();
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    let filter: any = {};
+    if (req.query.searchTerm) {
+      const search = req.query.searchTerm as string;
+      filter = {
+        name: { $regex: search, $options: "i" },
+      };
+    }
+    const stateList = await stateModel
+      .find(filter)
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
     if (!stateList) {
       return next(new ApiError(400, "States not found"));
