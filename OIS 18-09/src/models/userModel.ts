@@ -1,3 +1,4 @@
+import { boolean } from "joi";
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUser extends Document {
@@ -8,10 +9,12 @@ export interface IUser extends Document {
   password: string;
   congregationName: string;
   otp: string;
+  otpExpiration: Date;
   token: string;
   pinCode: string;
-  state: mongoose.Schema.Types.ObjectId;
-  city: mongoose.Schema.Types.ObjectId;
+  stateId: mongoose.Schema.Types.ObjectId;
+  cityId: mongoose.Schema.Types.ObjectId;
+  isDeleted: boolean;
 }
 
 const userSchema: Schema<IUser> = new Schema(
@@ -26,6 +29,7 @@ const userSchema: Schema<IUser> = new Schema(
     },
     gender: {
       type: String,
+      enum: ["0", "1", "2"], //0=female, 1=male, 2=other
       required: true,
     },
     email: {
@@ -45,6 +49,9 @@ const userSchema: Schema<IUser> = new Schema(
     otp: {
       type: String,
     },
+    otpExpiration: {
+      type: Date,
+    },
     pinCode: {
       type: String,
       required: true,
@@ -52,14 +59,19 @@ const userSchema: Schema<IUser> = new Schema(
     token: {
       type: String,
     },
-    state: {
+    stateId: {
       type: Schema.Types.ObjectId,
       ref: "states",
       required: true,
     },
-    city: {
+    cityId: {
       type: Schema.Types.ObjectId,
       ref: "cities",
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
       required: true,
     },
   },

@@ -15,15 +15,16 @@ const verifyJWT = async (req, res, next) => {
         }
         // Verify token
         const decodedTokenInfo = jwt.verify(token, process.env.PRIVATE_KEY);
-        const student = await userModel_1.default.findById(decodedTokenInfo.id);
-        if (!student) {
+        const user = await userModel_1.default.findById(decodedTokenInfo.id);
+        if (!user) {
             throw new ApiError_1.ApiError(401, "Unauthorized request");
         }
-        if (token !== student?.token) {
+        if (token !== user?.token) {
             throw new ApiError_1.ApiError(401, "Unauthorized request");
         }
         // Attach user to request
-        res.locals.student = student;
+        res.locals.user = user;
+        console.log(res.locals.user, "ddddd");
         next();
     }
     catch (error) {

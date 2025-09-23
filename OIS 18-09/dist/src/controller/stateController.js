@@ -38,7 +38,22 @@ const createState = async (req, res, next) => {
 exports.createState = createState;
 const getStateList = async (req, res, next) => {
     try {
-        const stateList = await stateModel_1.default.find();
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        let filter = {};
+        if (req.query.searchTerm) {
+            const search = req.query.searchTerm;
+            filter = {
+                name: { $regex: search, $options: "i" },
+            };
+        }
+        const stateList = await stateModel_1.default
+            .find(filter)
+            .skip(skip)
+            .limit(limit)
+            .exec();
+        const totalCount = await stateModel_1.default.countDocuments(filter);
         if (!stateList) {
             return next(new ApiError_1.ApiError(400, "States not found"));
         }

@@ -12,6 +12,7 @@ const userSchema = new mongoose_1.Schema({
     },
     gender: {
         type: String,
+        enum: ["0", "1", "2"], //0=female, 1=male, 2=other
         required: true,
     },
     email: {
@@ -31,6 +32,9 @@ const userSchema = new mongoose_1.Schema({
     otp: {
         type: String,
     },
+    otpExpiration: {
+        type: Date,
+    },
     pinCode: {
         type: String,
         required: true,
@@ -38,14 +42,19 @@ const userSchema = new mongoose_1.Schema({
     token: {
         type: String,
     },
-    state: {
+    stateId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "states",
         required: true,
     },
-    city: {
+    cityId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "cities",
+        required: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
         required: true,
     },
 }, {

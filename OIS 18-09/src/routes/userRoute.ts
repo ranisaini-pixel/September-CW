@@ -3,16 +3,25 @@ import { Router } from "express";
 import { verifyJWT } from "../middleware/jwtVerify";
 import { globalValidator } from "../middleware/globalValidationHandler";
 import {
+  changePasswordValidation,
   loginUserValidation,
-  OTPValidation,
+  OTPVerificationValidation,
+  resetPasswordValidation,
+  sendOTPValidation,
   signupUserValidation,
   updateUserValidation,
   updateValidation,
 } from "../utils/JoiValidation";
 import {
+  changePassword,
+  deleteUser,
   getUserById,
   loginUser,
+  logoutUser,
   otpVerification,
+  resetPassword,
+  // otpVerification,
+  sendOTP,
   signup,
   updateUser,
 } from "../controller/userController";
@@ -29,25 +38,40 @@ router.post(
   globalValidator(loginUserValidation, "body"),
   loginUser
 );
+router.post("/sentOTP", globalValidator(sendOTPValidation, "body"), sendOTP);
 router.post(
-  "/sentOTP",
-  globalValidator(OTPValidation, "body"),
+  "/verifyOTP",
+  globalValidator(updateValidation, "query"),
+  globalValidator(OTPVerificationValidation, "body"),
   otpVerification
+);
+
+router.post(
+  "/resetPassword",
+  globalValidator(updateValidation, "query"),
+  globalValidator(resetPasswordValidation, "body"),
+  resetPassword
+);
+
+router.post(
+  "/changePassword",
+  globalValidator(updateValidation, "query"),
+  globalValidator(changePasswordValidation, "body"),
+  changePassword
 );
 
 router.use(verifyJWT);
 router.get("/getUser", getUserById);
-// router.get("/getStudentList", getStudentList);
 router.put(
-  "/updateStudent/:_id",
+  "/updateUser/:_id",
   globalValidator(updateValidation, "params"),
   globalValidator(updateUserValidation, "body"),
   updateUser
 );
-// router.delete(
-//   "/deleteStudent/:_id",
-//   globalValidator(deleteStudentValidation, "params"),
-//   deleteStudent
-// );
+router.get("/logout", globalValidator(updateValidation, "query"), logoutUser);
+
+router.delete("/deleteUser", deleteUser);
+
+// / router.get("/getStudentList", getStudentList);
 
 export default router;

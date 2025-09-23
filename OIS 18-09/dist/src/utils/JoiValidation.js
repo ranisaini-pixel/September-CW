@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.updateCSCValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
+exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.updateCSCValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
 const Joi = require("joi");
 exports.signupUserValidation = Joi.object({
     firstName: Joi.string().trim().required().messages({
@@ -15,22 +15,45 @@ exports.signupUserValidation = Joi.object({
     email: Joi.string()
         .email({ tlds: { allow: ["com", "in"] } })
         .required(),
-    password: Joi.string().min(6).required().messages({
+    password: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .trim()
+        .required()
+        .messages({
         "string.empty": "Password is required",
         "string.min": "Password must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
     }),
-    congregationName: Joi.string().trim().required().messages({
+    congregationName: Joi.string()
+        .pattern(/^[a-zA-Z0-9]+$/)
+        .trim()
+        .required()
+        .messages({
         "string.empty": "Congregation Name is required",
+        "string.pattern.base": "Congregation Name must only contain letters and numbers (no special characters).",
+        "any.required": "Password is required.",
     }),
-    pinCode: Joi.string().min(6).required().messages({
+    pinCode: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .required()
+        .messages({
         "string.empty": "Pin Code is required",
         "string.min": "Pin Code must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
     }),
-    state: Joi.string().trim().required().messages({
-        "string.empty": "State is required",
+    stateId: Joi.string().hex().length(24).trim().required().messages({
+        "string.empty": "_id is required",
+        "string.hex": "_id must be a valid hex string",
+        "string.length": "_id must be 24 characters long",
     }),
-    city: Joi.string().trim().required().messages({
-        "string.empty": "City is required",
+    cityId: Joi.string().hex().length(24).trim().required().messages({
+        "string.empty": "_id is required",
+        "string.hex": "_id must be a valid hex string",
+        "string.length": "_id must be 24 characters long",
     }),
 });
 exports.loginUserValidation = Joi.object({
@@ -42,15 +65,21 @@ exports.loginUserValidation = Joi.object({
         "string.min": "Password must be at least 6 characters long",
     }),
 });
-exports.OTPValidation = Joi.object({
-    otp: Joi.string().min(6).required().messages({
+exports.sendOTPValidation = Joi.object({
+    email: Joi.string()
+        .email({ tlds: { allow: ["com", "in"] } })
+        .required(),
+});
+exports.OTPVerificationValidation = Joi.object({
+    otp: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .required()
+        .messages({
         "string.empty": "OTP is required",
         "string.min": "OTP must be at least 6 characters long",
-    }),
-    _id: Joi.string().hex().length(24).required().messages({
-        "string.empty": "_id is required",
-        "string.hex": "_id must be a valid hex string",
-        "string.length": "_id must be 24 characters long",
+        "string.pattern.base": "OTP must only contain numbers (no special characters and characters).",
     }),
 });
 exports.updateValidation = Joi.object({
@@ -71,10 +100,6 @@ exports.updateUserValidation = Joi.object({
         "string.empty": "Gender is required",
     }),
     email: Joi.string().email({ tlds: { allow: ["com", "in"] } }),
-    password: Joi.string().min(6).messages({
-        "string.empty": "Password is required",
-        "string.min": "Password must be at least 6 characters long",
-    }),
     congregationName: Joi.string().trim().messages({
         "string.empty": "Congregation Name is required",
     }),
@@ -87,6 +112,65 @@ exports.updateUserValidation = Joi.object({
     }),
     city: Joi.string().trim().messages({
         "string.empty": "City is required",
+    }),
+});
+exports.resetPasswordValidation = Joi.object({
+    password: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .trim()
+        .required()
+        .messages({
+        "string.empty": "Password is required",
+        "string.min": "Password must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+    }),
+    confirmPassword: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .trim()
+        .required()
+        .messages({
+        "string.empty": "Password is required",
+        "string.min": "Password must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+    }),
+});
+exports.changePasswordValidation = Joi.object({
+    oldPassword: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .trim()
+        .required()
+        .messages({
+        "string.empty": "Password is required",
+        "string.min": "Password must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+    }),
+    currentPassword: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .trim()
+        .required()
+        .messages({
+        "string.empty": "Password is required",
+        "string.min": "Password must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+    }),
+    confirmPassword: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .trim()
+        .required()
+        .messages({
+        "string.empty": "Password is required",
+        "string.min": "Password must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
     }),
 });
 exports.updateCSCValidation = Joi.object({

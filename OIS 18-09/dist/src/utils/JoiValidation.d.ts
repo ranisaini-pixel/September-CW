@@ -1,9 +1,12 @@
 import * as Joi from "joi";
 export declare const signupUserValidation: Joi.ObjectSchema<any>;
 export declare const loginUserValidation: Joi.ObjectSchema<any>;
-export declare const OTPValidation: Joi.ObjectSchema<any>;
+export declare const sendOTPValidation: Joi.ObjectSchema<any>;
+export declare const OTPVerificationValidation: Joi.ObjectSchema<any>;
 export declare const updateValidation: Joi.ObjectSchema<any>;
 export declare const updateUserValidation: Joi.ObjectSchema<any>;
+export declare const resetPasswordValidation: Joi.ObjectSchema<any>;
+export declare const changePasswordValidation: Joi.ObjectSchema<any>;
 export declare const updateCSCValidation: Joi.ObjectSchema<any>;
 export declare const deleteStudentValidation: Joi.ObjectSchema<any>;
 export declare const createCountryValidation: Joi.ObjectSchema<any>;

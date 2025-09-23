@@ -7,10 +7,12 @@ export interface IUser extends Document {
     password: string;
     congregationName: string;
     otp: string;
+    otpExpiration: Date;
     token: string;
     pinCode: string;
-    state: mongoose.Schema.Types.ObjectId;
-    city: mongoose.Schema.Types.ObjectId;
+    stateId: mongoose.Schema.Types.ObjectId;
+    cityId: mongoose.Schema.Types.ObjectId;
+    isDeleted: boolean;
 }
 declare const userModel: mongoose.Model<IUser, {}, {}, {}, mongoose.Document<unknown, {}, IUser, {}, {}> & IUser & Required<{
     _id: unknown;

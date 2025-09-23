@@ -32,18 +32,19 @@ export const verifyJWT = async (
       process.env.PRIVATE_KEY as string
     ) as DecodedToken;
 
-    const student = await studentModel.findById(decodedTokenInfo.id);
+    const user = await studentModel.findById(decodedTokenInfo.id);
 
-    if (!student) {
+    if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    if (token !== student?.token) {
+    if (token !== user?.token) {
       throw new ApiError(401, "Unauthorized request");
     }
 
     // Attach user to request
-    res.locals.student = student;
+    res.locals.user = user;
+    console.log(res.locals.user, "ddddd");
     next();
   } catch (error: any) {
     console.log("Error:", error);

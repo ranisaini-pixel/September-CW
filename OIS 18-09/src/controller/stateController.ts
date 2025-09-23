@@ -56,7 +56,7 @@ export const getStateList = async (
 
     let filter: any = {};
     if (req.query.searchTerm) {
-      const search = req.query.searchTerm as string;
+      const search = req.query.searchTerm;
       filter = {
         name: { $regex: search, $options: "i" },
       };
@@ -66,6 +66,8 @@ export const getStateList = async (
       .skip(skip)
       .limit(limit)
       .exec();
+
+    const totalCount = await stateModel.countDocuments(filter);
 
     if (!stateList) {
       return next(new ApiError(400, "States not found"));
