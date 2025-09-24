@@ -115,6 +115,7 @@ export const updateUserValidation = Joi.object({
     "string.min": "Pin Code must be at least 6 characters long",
   }),
   state: Joi.string().trim().messages({
+    //id validation
     "string.empty": "State is required",
   }),
   city: Joi.string().trim().messages({
@@ -202,6 +203,12 @@ export const updateCSCValidation = Joi.object({
     "string.empty": "_id is required",
     "string.hex": "_id must be a valid hex string",
     "string.length": "_id must be 24 characters long",
+  }),
+});
+
+export const searchTearmValidation = Joi.object({
+  searchTerm: Joi.string().trim().required().messages({
+    "string.empty": "searchTearm is required",
   }),
 });
 

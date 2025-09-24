@@ -6,6 +6,7 @@ import * as moment from "moment";
 import * as dotenv from "dotenv";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
+import { sendMail } from "../utils/nodemailer";
 
 dotenv.config();
 
@@ -149,6 +150,13 @@ export const sendOTP = async (
       }
     );
 
+    //send OTP on mail
+    await sendMail(
+      email,
+      "Your OTP Code",
+      `Your OTP is: ${otp} <p>Valid for 2 minutes</p >`
+    );
+
     if (!otpSaved) {
       return next(new ApiError(400, "OTP not saved"));
     }
@@ -176,25 +184,25 @@ export const otpVerification = async (
       return next(new ApiError(400, "User not exists"));
     }
 
-    //3 seperate checks
-    if (
-      user.otp !== otp ||
-      !user.otpExpiration ||
-      new Date(user.otpExpiration).getTime() < Date.now()
-    ) {
-      return next(
-        new ApiError(400, "Invalid OTP or No OTP found or OTP already expired")
-      );
+    if (user.otp == otp) {
+      if (
+        user.otpExpiration ||
+        new Date(user.otpExpiration).getTime() < Date.now()
+      ) {
+        return next(new ApiError(400, "OTP expired"));
+      } else {
+        await userModel.updateOne(
+          { _id },
+          { $set: { otp: null, otpExpiration: null } }
+        );
+
+        return res
+          .status(201)
+          .json(new ApiResponse(200, "OTP verified successfully", {}));
+      }
+    } else {
+      return next(new ApiError(400, "Invalid OTP"));
     }
-
-    await userModel.updateOne(
-      { _id },
-      { $set: { otp: null, otpExpiration: null } }
-    );
-
-    return res
-      .status(201)
-      .json(new ApiResponse(200, "OTP verified successfully", {}));
   } catch (error: any) {
     console.error("Error:", error);
     next(error);
@@ -231,8 +239,6 @@ export const updateUser = async (
     let updatedUserData = await userModel
       .findById({ _id })
       .select("-password -token");
-
-    console.log(updatedUserData, "fff");
 
     if (!updatedUser) {
       return next(new ApiError(400, "User Profile not updated"));

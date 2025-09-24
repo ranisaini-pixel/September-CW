@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.updateCSCValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
+exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.searchTearmValidation = exports.updateCSCValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
 const Joi = require("joi");
 exports.signupUserValidation = Joi.object({
     firstName: Joi.string().trim().required().messages({
@@ -184,6 +184,11 @@ exports.updateCSCValidation = Joi.object({
         "string.empty": "_id is required",
         "string.hex": "_id must be a valid hex string",
         "string.length": "_id must be 24 characters long",
+    }),
+});
+exports.searchTearmValidation = Joi.object({
+    searchTerm: Joi.string().trim().required().messages({
+        "string.empty": "searchTearm is required",
     }),
 });
 exports.deleteStudentValidation = Joi.object({

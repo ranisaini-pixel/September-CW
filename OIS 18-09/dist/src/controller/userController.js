@@ -8,6 +8,7 @@ const moment = require("moment");
 const dotenv = require("dotenv");
 const ApiError_1 = require("../utils/ApiError");
 const ApiResponse_1 = require("../utils/ApiResponse");
+const nodemailer_1 = require("../utils/nodemailer");
 dotenv.config();
 const signup = async (req, res, next) => {
     try {
@@ -99,6 +100,8 @@ const sendOTP = async (req, res, next) => {
         }, {
             new: true,
         });
+        //send OTP on mail
+        await (0, nodemailer_1.sendMail)(email, "Your OTP Code", `Your OTP is: ${otp} < /h2><p>Valid for 2 minutes</p >`);
         if (!otpSaved) {
             return next(new ApiError_1.ApiError(400, "OTP not saved"));
         }
@@ -120,16 +123,21 @@ const otpVerification = async (req, res, next) => {
         if (!user) {
             return next(new ApiError_1.ApiError(400, "User not exists"));
         }
-        //3 seperate checks
-        if (user.otp !== otp ||
-            !user.otpExpiration ||
-            new Date(user.otpExpiration).getTime() < Date.now()) {
-            return next(new ApiError_1.ApiError(400, "Invalid OTP or No OTP found or OTP already expired"));
+        if (user.otp == otp) {
+            if (user.otpExpiration ||
+                new Date(user.otpExpiration).getTime() < Date.now()) {
+                return next(new ApiError_1.ApiError(400, "OTP expired"));
+            }
+            else {
+                await userModel_1.default.updateOne({ _id }, { $set: { otp: null, otpExpiration: null } });
+                return res
+                    .status(201)
+                    .json(new ApiResponse_1.ApiResponse(200, "OTP verified successfully", {}));
+            }
         }
-        await userModel_1.default.updateOne({ _id }, { $set: { otp: null, otpExpiration: null } });
-        return res
-            .status(201)
-            .json(new ApiResponse_1.ApiResponse(200, "OTP verified successfully", {}));
+        else {
+            return next(new ApiError_1.ApiError(400, "Invalid OTP"));
+        }
     }
     catch (error) {
         console.error("Error:", error);
@@ -157,7 +165,6 @@ const updateUser = async (req, res, next) => {
         let updatedUserData = await userModel_1.default
             .findById({ _id })
             .select("-password -token");
-        console.log(updatedUserData, "fff");
         if (!updatedUser) {
             return next(new ApiError_1.ApiError(400, "User Profile not updated"));
         }
@@ -287,9 +294,8 @@ const logoutUser = async (req, res) => {
 exports.logoutUser = logoutUser;
 const deleteUser = async (req, res, next) => {
     try {
-        let id = res.locals.user;
-        console.log(id, "fghjk");
-        const deleted = await userModel_1.default.findByIdAndUpdate({ id }, {
+        let _id = res.locals.user._id;
+        const deleted = await userModel_1.default.findByIdAndUpdate({ _id }, {
             $set: {
                 isDeleted: true,
             },

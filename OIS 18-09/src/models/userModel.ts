@@ -29,7 +29,7 @@ const userSchema: Schema<IUser> = new Schema(
     },
     gender: {
       type: String,
-      enum: ["0", "1", "2"], //0=female, 1=male, 2=other
+      enum: ["0", "1", "2"], //0=male, 1=female, 2=other
       required: true,
     },
     email: {

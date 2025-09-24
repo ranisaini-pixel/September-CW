@@ -10,6 +10,7 @@ import {
   createCityValidation,
   deleteCSCValidation,
   getByIdValidation,
+  searchTearmValidation,
   updateCSCValidation,
   updateValidation,
 } from "../utils/JoiValidation";
@@ -27,7 +28,7 @@ router.get(
   globalValidator(getByIdValidation, "query"),
   getCityById
 );
-router.get("/getCityList", getCityList);
+router.get("/getCityList", globalValidator(searchTearmValidation), getCityList);
 router.put(
   "/update/:_id",
   globalValidator(updateValidation, "params"),
