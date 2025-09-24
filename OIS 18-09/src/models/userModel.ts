@@ -11,6 +11,7 @@ export interface IUser extends Document {
   otp: string;
   otpExpiration: Date;
   token: string;
+  role: string;
   pinCode: string;
   stateId: mongoose.Schema.Types.ObjectId;
   cityId: mongoose.Schema.Types.ObjectId;
@@ -58,6 +59,11 @@ const userSchema: Schema<IUser> = new Schema(
     },
     token: {
       type: String,
+    },
+    role: {
+      type: String,
+      enum: ["0", "1"], //1=admin and 0=user,
+      default: "0",
     },
     stateId: {
       type: Schema.Types.ObjectId,

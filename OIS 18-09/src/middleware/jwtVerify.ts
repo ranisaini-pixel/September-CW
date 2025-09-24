@@ -44,7 +44,6 @@ export const verifyJWT = async (
 
     // Attach user to request
     res.locals.user = user;
-    console.log(res.locals.user, "ddddd");
     next();
   } catch (error: any) {
     console.log("Error:", error);

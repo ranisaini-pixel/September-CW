@@ -101,7 +101,7 @@ const sendOTP = async (req, res, next) => {
             new: true,
         });
         //send OTP on mail
-        await (0, nodemailer_1.sendMail)(email, "Your OTP Code", `Your OTP is: ${otp} < /h2><p>Valid for 2 minutes</p >`);
+        await (0, nodemailer_1.sendMail)(email, "Your OTP Code", `Your OTP is: ${otp} <p>Valid for 2 minutes</p >`);
         if (!otpSaved) {
             return next(new ApiError_1.ApiError(400, "OTP not saved"));
         }

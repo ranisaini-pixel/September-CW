@@ -16,6 +16,7 @@ import {
   changePassword,
   deleteUser,
   getUserById,
+  getUserList,
   loginUser,
   logoutUser,
   otpVerification,
@@ -61,7 +62,7 @@ router.post(
 );
 
 router.use(verifyJWT);
-router.get("/getUser", getUserById);
+router.get("/getUser", globalValidator(updateValidation, "query"), getUserById);
 router.put(
   "/updateUser/:_id",
   globalValidator(updateValidation, "params"),
@@ -72,6 +73,6 @@ router.get("/logout", globalValidator(updateValidation, "query"), logoutUser);
 
 router.delete("/deleteUser", deleteUser);
 
-// / router.get("/getStudentList", getStudentList);
+router.get("/getUsersList", getUserList);
 
 export default router;

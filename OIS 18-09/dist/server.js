@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const mongoose_1 = require("mongoose");
+const adminRoute_1 = require("./src/routes/adminRoute");
 const userRoute_1 = require("./src/routes/userRoute");
 const stateRoute_1 = require("./src/routes/stateRoute");
 const cityRoute_1 = require("./src/routes/cityRoute");
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieparser());
 // const PORT = 8000;
+app.use("/admin", adminRoute_1.default);
 app.use("/user", userRoute_1.default);
 app.use("/state", stateRoute_1.default);
 app.use("/city", cityRoute_1.default);

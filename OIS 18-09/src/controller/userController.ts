@@ -30,6 +30,10 @@ export const signup = async (
 
     const existedUser = await userModel.findOne({ email });
 
+    if (existedUser?.isDeleted === true) {
+      return next(new ApiError(400, "User Profile Deleted"));
+    }
+
     if (existedUser) {
       return next(new ApiError(400, "User already exists"));
     } else {
@@ -259,7 +263,9 @@ export const getUserById = async (
   next: NextFunction
 ) => {
   try {
-    const user = await userModel.findById(res.locals.student._id);
+    const user = await userModel
+      .findById(res.locals.user._id)
+      .select("-password -isDeleted -token");
 
     if (!user) {
       return next(new ApiError(400, "User not found"));
@@ -430,41 +436,27 @@ export const deleteUser = async (
   }
 };
 
-// export const getStudentList = async (req: Request, res: Response) => {
-//   try {
-//     const studentsList = await studentModel.find();
+export const getUserList = async (req: Request, res: Response) => {
+  try {
+    const usersList = await userModel
+      .find()
+      .select(
+        "-password -role -isDeleted -otp -otpExpiration -pinCode -congregationName -token -updatedAt -__v"
+      );
 
-//     if (!studentsList) {
-//       return next(new ApiError(400, "Student not found"));
-//     } else {
-//       return res
-//         .status(200)
-//         .json(new ApiResponse(200, "All Student List", studentsList));
-//     }
-//   } catch (error: any) {
-//     console.log("Error:", error);
-//     next(error);
-//   }
-// };
+    if (!usersList) {
+      return next(new ApiError(400, "Users list not found"));
+    } else {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "Users List", usersList));
+    }
+  } catch (error: any) {
+    console.log("Error:", error);
+    next(error);
+  }
+};
 
-// export const deleteStudent = async (req: Request, res: Response) => {
-//   try {
-//     const { _id } = req.params;
-
-//     const deleted = await studentModel.deleteOne({ _id });
-
-//     if (deleted.deletedCount === 0) {
-//       return next(new ApiError(400, "Student not found"));
-//     } else {
-//       return res
-//         .status(200)
-//         .json(new ApiResponse(200, "Student Deleted Successfully", null));
-//     }
-//   } catch (error: any) {
-//     console.log("Error:", error);
-//     next(error);
-//   }
-// };
 function next(arg0: ApiError) {
   throw new Error("Function not implemented.");
 }

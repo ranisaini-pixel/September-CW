@@ -12,7 +12,7 @@ const userSchema = new mongoose_1.Schema({
     },
     gender: {
         type: String,
-        enum: ["0", "1", "2"], //0=female, 1=male, 2=other
+        enum: ["0", "1", "2"], //0=male, 1=female, 2=other
         required: true,
     },
     email: {
@@ -41,6 +41,11 @@ const userSchema = new mongoose_1.Schema({
     },
     token: {
         type: String,
+    },
+    role: {
+        type: String,
+        enum: ["0", "1"], //1=admin and 0=user,
+        default: "0",
     },
     stateId: {
         type: mongoose_1.Schema.Types.ObjectId,

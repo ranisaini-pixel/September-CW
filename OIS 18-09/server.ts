@@ -1,8 +1,10 @@
 import * as express from "express";
 import mongoose from "mongoose";
+import adminRoute from "./src/routes/adminRoute";
 import userRoute from "./src/routes/userRoute";
 import stateRoute from "./src/routes/stateRoute";
 import cityRoute from "./src/routes/cityRoute";
+import congregationRoute from "./src/routes/congregationRoute";
 import { MONGO_URI } from "./constant";
 import * as dotenv from "dotenv";
 import * as cors from "cors";
@@ -33,9 +35,11 @@ app.use(cookieparser());
 
 // const PORT = 8000;
 
+app.use("/admin", adminRoute);
 app.use("/user", userRoute);
 app.use("/state", stateRoute);
 app.use("/city", cityRoute);
+app.use("/congregation", congregationRoute);
 
 // app.get("*", (req, res) => {
 //   return res

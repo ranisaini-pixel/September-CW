@@ -9,8 +9,11 @@ exports.signupUserValidation = Joi.object({
     lastName: Joi.string().trim().required().messages({
         "string.empty": "Last Name is required",
     }),
-    gender: Joi.string().trim().required().messages({
+    gender: Joi.string().trim().required().valid("0", "1", "2").messages({
         "string.empty": "Gender is required",
+    }),
+    role: Joi.string().valid("1").trim().messages({
+        "string.empty": " Role is required",
     }),
     email: Joi.string()
         .email({ tlds: { allow: ["com", "in"] } })
@@ -96,7 +99,7 @@ exports.updateUserValidation = Joi.object({
     lastName: Joi.string().trim().messages({
         "string.empty": "Last Name is required",
     }),
-    gender: Joi.string().trim().messages({
+    gender: Joi.string().trim().valid("0", "1", "2").messages({
         "string.empty": "Gender is required",
     }),
     email: Joi.string().email({ tlds: { allow: ["com", "in"] } }),
@@ -109,68 +112,95 @@ exports.updateUserValidation = Joi.object({
     }),
     state: Joi.string().trim().messages({
         "string.empty": "State is required",
+        "string.hex": "_id must be a valid hex string",
+        "string.length": "_id must be 24 characters long",
     }),
     city: Joi.string().trim().messages({
         "string.empty": "City is required",
+        "string.hex": "_id must be a valid hex string",
+        "string.length": "_id must be 24 characters long",
     }),
 });
 exports.resetPasswordValidation = Joi.object({
     password: Joi.string()
         .pattern(/^[0-9]+$/)
-        .min(6)
-        .max(6)
+        .min(8)
+        .max(15)
         .trim()
         .required()
+        .regex(/[A-Z]/, "one upper-case character")
+        .regex(/[a-z]/, "one lower-case character")
+        .regex(/[0-9]/, "one number")
+        // .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
-        "string.min": "Password must be at least 6 characters long",
-        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+        "string.min": "Password must be at least 8 characters long",
+        "string.max": "Password must be at least 15 characters long",
     }),
     confirmPassword: Joi.string()
         .pattern(/^[0-9]+$/)
-        .min(6)
-        .max(6)
+        .min(8)
+        .max(15)
         .trim()
         .required()
+        .regex(/[A-Z]/, "one upper-case character")
+        .regex(/[a-z]/, "one lower-case character")
+        .regex(/[0-9]/, "one number")
+        // .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
-        "string.min": "Password must be at least 6 characters long",
-        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+        "string.min": "Password must be at least 8 characters long",
+        "string.max": "Password must be at least 15 characters long",
     }),
 });
 exports.changePasswordValidation = Joi.object({
     oldPassword: Joi.string()
         .pattern(/^[0-9]+$/)
-        .min(6)
-        .max(6)
+        .min(8)
+        .max(15)
         .trim()
         .required()
+        .regex(/[A-Z]/, "one upper-case character")
+        .regex(/[a-z]/, "one lower-case character")
+        .regex(/[0-9]/, "one number")
+        .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
-        "string.min": "Password must be at least 6 characters long",
-        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+        "string.min": "Password must be at least 8 characters long",
+        "string.max": "Password must be at least 15 characters long",
+        "string.pattern.base": "Password must contain at least {#name}",
     }),
     currentPassword: Joi.string()
         .pattern(/^[0-9]+$/)
-        .min(6)
-        .max(6)
+        .min(8)
+        .max(15)
         .trim()
         .required()
+        .regex(/[A-Z]/, "one upper-case character")
+        .regex(/[a-z]/, "one lower-case character")
+        .regex(/[0-9]/, "one number")
+        .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
-        "string.min": "Password must be at least 6 characters long",
-        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+        "string.min": "Password must be at least 8 characters long",
+        "string.max": "Password must be at least 15 characters long",
+        "string.pattern.base": "Password must contain at least {#name}",
     }),
     confirmPassword: Joi.string()
         .pattern(/^[0-9]+$/)
-        .min(6)
-        .max(6)
+        .min(8)
+        .max(15)
         .trim()
         .required()
+        .regex(/[A-Z]/, "one upper-case character")
+        .regex(/[a-z]/, "one lower-case character")
+        .regex(/[0-9]/, "one number")
+        .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
-        "string.min": "Password must be at least 6 characters long",
-        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
+        "string.min": "Password must be at least 8 characters long",
+        "string.max": "Password must be at least 15 characters long",
+        "string.pattern.base": "Password must contain at least {#name}",
     }),
 });
 exports.updateCSCValidation = Joi.object({

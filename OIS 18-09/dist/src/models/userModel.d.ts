@@ -9,6 +9,7 @@ export interface IUser extends Document {
     otp: string;
     otpExpiration: Date;
     token: string;
+    role: string;
     pinCode: string;
     stateId: mongoose.Schema.Types.ObjectId;
     cityId: mongoose.Schema.Types.ObjectId;
