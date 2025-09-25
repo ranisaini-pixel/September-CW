@@ -253,6 +253,10 @@ export const searchTearmValidation = Joi.object({
   searchTerm: Joi.string().trim().required().messages({
     "string.empty": "searchTearm is required",
   }),
+  limit: Joi.number().min(1).optional(),
+  page: Joi.number().min(1).required().messages({
+    "string.empty": "Page is required",
+  }),
 });
 
 export const deleteStudentValidation = Joi.object({

@@ -56,12 +56,16 @@ export const getCityList = async (
       };
     }
 
+    console.log(req.query, "query--------------------------------");
+
     const cityList = await cityModel
       .find(filter)
       .populate("state", "name")
       .skip(skip)
       .limit(limit)
       .exec();
+
+    console.log(cityList, "-----------------------");
 
     const totalCount = await cityModel.countDocuments(filter);
 

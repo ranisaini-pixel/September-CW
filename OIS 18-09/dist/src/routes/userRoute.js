@@ -13,10 +13,10 @@ router.post("/verifyOTP", (0, globalValidationHandler_1.globalValidator)(JoiVali
 router.post("/resetPassword", (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.updateValidation, "query"), (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.resetPasswordValidation, "body"), userController_1.resetPassword);
 router.post("/changePassword", (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.updateValidation, "query"), (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.changePasswordValidation, "body"), userController_1.changePassword);
 router.use(jwtVerify_1.verifyJWT);
-router.get("/getUser", userController_1.getUserById);
+router.get("/getUser", (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.updateValidation, "query"), userController_1.getUserById);
 router.put("/updateUser/:_id", (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.updateValidation, "params"), (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.updateUserValidation, "body"), userController_1.updateUser);
 router.get("/logout", (0, globalValidationHandler_1.globalValidator)(JoiValidation_1.updateValidation, "query"), userController_1.logoutUser);
 router.delete("/deleteUser", userController_1.deleteUser);
-// / router.get("/getStudentList", getStudentList);
+router.get("/getUsersList", userController_1.getUserList);
 exports.default = router;
 //# sourceMappingURL=userRoute.js.map

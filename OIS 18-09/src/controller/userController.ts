@@ -413,12 +413,15 @@ export const deleteUser = async (
 ) => {
   try {
     let _id = res.locals.user._id;
+    let user = await userModel.findById({ _id });
+    let addDeletedToEmail = user?.email + "_deleted_user";
 
     const deleted = await userModel.findByIdAndUpdate(
       { _id },
       {
         $set: {
           isDeleted: true,
+          email: addDeletedToEmail,
         },
       }
     );

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ForgotPassword = exports.loginAdmin = void 0;
+exports.getAdminDetails = exports.ForgotPassword = exports.loginAdmin = void 0;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const moment = require("moment");
@@ -87,4 +87,23 @@ const ForgotPassword = async (req, res, next) => {
     }
 };
 exports.ForgotPassword = ForgotPassword;
+const getAdminDetails = async (req, res, next) => {
+    try {
+        const { _id } = req.query;
+        const admin = await userModel_1.default
+            .findById({ _id })
+            .select("-password -isDeleted -token");
+        if (!admin) {
+            return next(new ApiError_1.ApiError(400, "Admin not found"));
+        }
+        else {
+            return res.status(200).json(new ApiResponse_1.ApiResponse(200, "Admin Details", admin));
+        }
+    }
+    catch (error) {
+        console.log("Error:", error);
+        next(error);
+    }
+};
+exports.getAdminDetails = getAdminDetails;
 //# sourceMappingURL=adminController.js.map

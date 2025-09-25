@@ -2,6 +2,7 @@ import stateModel, { IState } from "../models/stateModel";
 import { NextFunction, Request, Response } from "express";
 import { ApiResponse } from "../utils/ApiResponse";
 import { ApiError } from "../utils/ApiError";
+import { IPagination } from "../utils/Interfaces";
 
 export const createState = async (
   req: Request,
@@ -44,37 +45,100 @@ export const createState = async (
   }
 };
 
+// export const getStateList = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const page = parseInt(req.query.page as string) || 1;
+//     const limit = parseInt(req.query.limit as string) || 10;
+//     const skip = (page - 1) * limit;
+
+//     let filter: any = {};
+//     if (req.query.searchTerm) {
+//       const search = req.query.searchTerm;
+//       filter = {
+//         name: { $regex: search, $options: "i" },
+//       };
+//     }
+//     const stateList = await stateModel
+//       .find(filter)
+//       .skip(skip)
+//       .limit(limit)
+//       .exec();
+
+//     const totalCount = await stateModel.countDocuments(filter);
+
+//     if (!stateList) {
+//       return next(new ApiError(400, "States not found"));
+//     } else {
+//       return res
+//         .status(200)
+//         .json(new ApiResponse(200, "States List", stateList));
+//     }
+//   } catch (error: any) {
+//     console.log("Error:", error);
+//     next(error);
+//   }
+// };
+
 export const getStateList = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const skip = (page - 1) * limit;
+    const { page, limit = 10, searchTerm }: IPagination = req.query;
+    console.log(limit, "---------------------------");
 
     let filter: any = {};
-    if (req.query.searchTerm) {
-      const search = req.query.searchTerm;
+    if (searchTerm) {
+      const search = searchTerm;
       filter = {
         name: { $regex: search, $options: "i" },
       };
     }
-    const stateList = await stateModel
-      .find(filter)
-      .skip(skip)
-      .limit(limit)
-      .exec();
 
     const totalCount = await stateModel.countDocuments(filter);
+
+    const stateList = await stateModel.aggregate([
+      {
+        $match: filter,
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      // {
+      //   $facet: {
+      //     metadata: [{ $count: "totalCount" }],
+      //     data: [{ $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+      //   },
+      // },
+    ]);
 
     if (!stateList) {
       return next(new ApiError(400, "States not found"));
     } else {
-      return res
-        .status(200)
-        .json(new ApiResponse(200, "States List", stateList));
+      return res.status(200).json(
+        new ApiResponse(200, "States List", {
+          states: stateList,
+          pagination: {
+            total: totalCount,
+            page,
+            limit,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+        })
+      );
     }
   } catch (error: any) {
     console.log("Error:", error);

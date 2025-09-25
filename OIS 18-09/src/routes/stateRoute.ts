@@ -13,6 +13,7 @@ import {
   updateCSCValidation,
   deleteCSCValidation,
   getByIdValidation,
+  searchTearmValidation,
 } from "../utils/JoiValidation";
 import { globalValidator } from "../middleware/globalValidationHandler";
 
@@ -28,7 +29,11 @@ router.get(
   globalValidator(getByIdValidation, "query"),
   getStateById
 );
-router.get("/getStateList", getStateList);
+router.get(
+  "/getStateList",
+  globalValidator(searchTearmValidation, "query"),
+  getStateList
+);
 router.put(
   "/updateState/:_id",
   globalValidator(updateValidation, "params"),

@@ -28,7 +28,11 @@ router.get(
   globalValidator(getByIdValidation, "query"),
   getCityById
 );
-router.get("/getCityList", globalValidator(searchTearmValidation), getCityList);
+router.get(
+  "/getCityList",
+  globalValidator(searchTearmValidation, "query"),
+  getCityList
+);
 router.put(
   "/update/:_id",
   globalValidator(updateValidation, "params"),

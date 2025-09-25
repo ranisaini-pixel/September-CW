@@ -5,26 +5,25 @@ type ValidationTarget = "body" | "query" | "params";
 
 export const globalValidator = (
   schema: ObjectSchema,
-  target: ValidationTarget = "body"
+  target: ValidationTarget
 ) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const { error, value } = schema.validate(req[target], {
-      abortEarly: false,
-      allowUnknown: false,
-      stripUnknown: true,
-    });
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const value = await schema.validateAsync(req[target]);
 
-    if (error) {
-      return res.status(400).json({
-        code: 400,
-        message: error.message,
-      });
-    }
+      // if (error) {
+      //   return res.status(400).json({
+      //     code: 400,
+      //     message: error.message,
+      //   });
+      // }
 
-    //this will replace previous value with the new value
-    // req[target] = value;
-    Object.assign(req[target], value);
+      //this will replace previous value with the new value
+      req[target] = value;
+      // Object.assign(req[target], value);
+      console.log(value, "value");
 
-    next();
+      next();
+    } catch (error) {}
   };
 };

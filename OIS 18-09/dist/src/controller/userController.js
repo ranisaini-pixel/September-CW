@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.logoutUser = exports.changePassword = exports.resetPassword = exports.getUserById = exports.updateUser = exports.otpVerification = exports.sendOTP = exports.loginUser = exports.signup = void 0;
+exports.getUserList = exports.deleteUser = exports.logoutUser = exports.changePassword = exports.resetPassword = exports.getUserById = exports.updateUser = exports.otpVerification = exports.sendOTP = exports.loginUser = exports.signup = void 0;
 const userModel_1 = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -14,6 +14,9 @@ const signup = async (req, res, next) => {
     try {
         const { firstName, lastName, gender, email, password, congregationName, pinCode, stateId, cityId, } = req.body;
         const existedUser = await userModel_1.default.findOne({ email });
+        if (existedUser?.isDeleted === true) {
+            return next(new ApiError_1.ApiError(400, "User Profile Deleted"));
+        }
         if (existedUser) {
             return next(new ApiError_1.ApiError(400, "User already exists"));
         }
@@ -182,7 +185,9 @@ const updateUser = async (req, res, next) => {
 exports.updateUser = updateUser;
 const getUserById = async (req, res, next) => {
     try {
-        const user = await userModel_1.default.findById(res.locals.student._id);
+        const user = await userModel_1.default
+            .findById(res.locals.user._id)
+            .select("-password -isDeleted -token");
         if (!user) {
             return next(new ApiError_1.ApiError(400, "User not found"));
         }
@@ -315,37 +320,26 @@ const deleteUser = async (req, res, next) => {
     }
 };
 exports.deleteUser = deleteUser;
-// export const getStudentList = async (req: Request, res: Response) => {
-//   try {
-//     const studentsList = await studentModel.find();
-//     if (!studentsList) {
-//       return next(new ApiError(400, "Student not found"));
-//     } else {
-//       return res
-//         .status(200)
-//         .json(new ApiResponse(200, "All Student List", studentsList));
-//     }
-//   } catch (error: any) {
-//     console.log("Error:", error);
-//     next(error);
-//   }
-// };
-// export const deleteStudent = async (req: Request, res: Response) => {
-//   try {
-//     const { _id } = req.params;
-//     const deleted = await studentModel.deleteOne({ _id });
-//     if (deleted.deletedCount === 0) {
-//       return next(new ApiError(400, "Student not found"));
-//     } else {
-//       return res
-//         .status(200)
-//         .json(new ApiResponse(200, "Student Deleted Successfully", null));
-//     }
-//   } catch (error: any) {
-//     console.log("Error:", error);
-//     next(error);
-//   }
-// };
+const getUserList = async (req, res) => {
+    try {
+        const usersList = await userModel_1.default
+            .find()
+            .select("-password -role -isDeleted -otp -otpExpiration -pinCode -congregationName -token -updatedAt -__v");
+        if (!usersList) {
+            return next(new ApiError_1.ApiError(400, "Users list not found"));
+        }
+        else {
+            return res
+                .status(200)
+                .json(new ApiResponse_1.ApiResponse(200, "Users List", usersList));
+        }
+    }
+    catch (error) {
+        console.log("Error:", error);
+        next(error);
+    }
+};
+exports.getUserList = getUserList;
 function next(arg0) {
     throw new Error("Function not implemented.");
 }

@@ -7,6 +7,7 @@ export declare const updateValidation: Joi.ObjectSchema<any>;
 export declare const updateUserValidation: Joi.ObjectSchema<any>;
 export declare const resetPasswordValidation: Joi.ObjectSchema<any>;
 export declare const changePasswordValidation: Joi.ObjectSchema<any>;
+export declare const addCongregationValidation: Joi.ObjectSchema<any>;
 export declare const updateCSCValidation: Joi.ObjectSchema<any>;
 export declare const searchTearmValidation: Joi.ObjectSchema<any>;
 export declare const deleteStudentValidation: Joi.ObjectSchema<any>;

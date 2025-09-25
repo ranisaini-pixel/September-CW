@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.searchTearmValidation = exports.updateCSCValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
+exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.searchTearmValidation = exports.updateCSCValidation = exports.addCongregationValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
 const Joi = require("joi");
 exports.signupUserValidation = Joi.object({
     firstName: Joi.string().trim().required().messages({
@@ -123,84 +123,82 @@ exports.updateUserValidation = Joi.object({
 });
 exports.resetPasswordValidation = Joi.object({
     password: Joi.string()
-        .pattern(/^[0-9]+$/)
         .min(8)
         .max(15)
-        .trim()
+        .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$/, "password")
         .required()
-        .regex(/[A-Z]/, "one upper-case character")
-        .regex(/[a-z]/, "one lower-case character")
-        .regex(/[0-9]/, "one number")
-        // .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
         "string.min": "Password must be at least 8 characters long",
-        "string.max": "Password must be at least 15 characters long",
+        "string.max": "Password must be at most 15 characters long",
+        "string.pattern.name": "Password must include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
     }),
     confirmPassword: Joi.string()
-        .pattern(/^[0-9]+$/)
         .min(8)
         .max(15)
-        .trim()
+        .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$/, "password")
         .required()
-        .regex(/[A-Z]/, "one upper-case character")
-        .regex(/[a-z]/, "one lower-case character")
-        .regex(/[0-9]/, "one number")
-        // .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
         "string.min": "Password must be at least 8 characters long",
-        "string.max": "Password must be at least 15 characters long",
+        "string.max": "Password must be at most 15 characters long",
+        "string.pattern.name": "Password must include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
     }),
 });
 exports.changePasswordValidation = Joi.object({
     oldPassword: Joi.string()
-        .pattern(/^[0-9]+$/)
         .min(8)
         .max(15)
-        .trim()
+        .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$/, "password")
         .required()
-        .regex(/[A-Z]/, "one upper-case character")
-        .regex(/[a-z]/, "one lower-case character")
-        .regex(/[0-9]/, "one number")
-        .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
         "string.min": "Password must be at least 8 characters long",
-        "string.max": "Password must be at least 15 characters long",
-        "string.pattern.base": "Password must contain at least {#name}",
+        "string.max": "Password must be at most 15 characters long",
+        "string.pattern.name": "Password must include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
     }),
     currentPassword: Joi.string()
-        .pattern(/^[0-9]+$/)
         .min(8)
         .max(15)
-        .trim()
+        .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$/, "password")
         .required()
-        .regex(/[A-Z]/, "one upper-case character")
-        .regex(/[a-z]/, "one lower-case character")
-        .regex(/[0-9]/, "one number")
-        .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
         "string.min": "Password must be at least 8 characters long",
-        "string.max": "Password must be at least 15 characters long",
-        "string.pattern.base": "Password must contain at least {#name}",
+        "string.max": "Password must be at most 15 characters long",
+        "string.pattern.name": "Password must include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
     }),
     confirmPassword: Joi.string()
-        .pattern(/^[0-9]+$/)
         .min(8)
         .max(15)
-        .trim()
+        .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,15}$/, "password")
         .required()
-        .regex(/[A-Z]/, "one upper-case character")
-        .regex(/[a-z]/, "one lower-case character")
-        .regex(/[0-9]/, "one number")
-        .regex(/[^a-zA-Z0-9]/, "one special character")
         .messages({
         "string.empty": "Password is required",
         "string.min": "Password must be at least 8 characters long",
-        "string.max": "Password must be at least 15 characters long",
-        "string.pattern.base": "Password must contain at least {#name}",
+        "string.max": "Password must be at most 15 characters long",
+        "string.pattern.name": "Password must include at least 1 uppercase, 1 lowercase, 1 number, and 1 special character",
+    }),
+});
+exports.addCongregationValidation = Joi.object({
+    congregationName: Joi.string().trim().required().messages({
+        "string.empty": "First Name is required",
+    }),
+    congregationState: Joi.string().trim().required().messages({
+        "string.empty": "Last Name is required",
+    }),
+    congregationCity: Joi.string().trim().required().messages({
+        "string.empty": "Last Name is required",
+    }),
+    zipCode: Joi.string()
+        .pattern(/^[0-9]+$/)
+        .min(6)
+        .max(6)
+        .required()
+        .messages({
+        "string.empty": "Pin Code is required",
+        "string.min": "Pin Code must be at least 6 characters long",
+        "string.pattern.base": "Password must only contain numbers (no special characters and characters).",
     }),
 });
 exports.updateCSCValidation = Joi.object({
