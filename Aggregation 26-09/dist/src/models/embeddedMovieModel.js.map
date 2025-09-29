@@ -1,0 +1,1 @@
+{"version":3,"file":"embeddedMovieModel.js","sourceRoot":"","sources":["../../../src/models/embeddedMovieModel.ts"],"names":[],"mappings":";;AAAA,uCAAgC;AAEhC,MAAM,WAAW,GAAG,IAAI,kBAAQ,CAAC,MAAM,CACrC,EAAE,EACF,EAAE,MAAM,EAAE,KAAK,EAAE,UAAU,EAAE,QAAQ,EAAE,CACxC,CAAC;AAEF,MAAM,UAAU,GAAG,kBAAQ,CAAC,KAAK,CAAC,QAAQ,EAAE,WAAW,CAAC,CAAC;AACzD,kBAAe,UAAU,CAAC"}
