@@ -4,6 +4,7 @@ exports.deleteCity = exports.updateCity = exports.getCityById = exports.getCityL
 const cityModel_1 = require("../models/cityModel");
 const ApiResponse_1 = require("../utils/ApiResponse");
 const ApiError_1 = require("../utils/ApiError");
+const pagination_1 = require("../utils/pagination");
 const createCity = async (req, res, next) => {
     try {
         const { name, state } = req.body;
@@ -33,35 +34,22 @@ const createCity = async (req, res, next) => {
 exports.createCity = createCity;
 const getCityList = async (req, res, next) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
-        let filter = {};
-        if (req.query.searchTerm) {
-            const search = req.query.searchTerm;
-            filter = {
-                name: { $regex: search, $options: "i" },
-            };
+        // const cityList = await cityModel
+        //   .find(filter)
+        //   .populate("state", "name")
+        //   .skip(skip)
+        //   .limit(limit)
+        //   .exec();
+        const { page = 1, limit = 10, searchTerm } = req.query;
+        const result = await (0, pagination_1.pagination)(cityModel_1.default, {
+            page: Number(page),
+            limit: Number(limit),
+            searchTerm: searchTerm,
+        });
+        if (!result.data.length) {
+            return next(new ApiError_1.ApiError(404, "City not found"));
         }
-        const cityList = await cityModel_1.default
-            .find(filter)
-            .populate("state", "name")
-            .skip(skip)
-            .limit(limit)
-            .exec();
-        const totalCount = await cityModel_1.default.countDocuments(filter);
-        if (!cityList || cityList.length === 0) {
-            return next(new ApiError_1.ApiError(404, "No cities found"));
-        }
-        return res.status(200).json(new ApiResponse_1.ApiResponse(200, "Cities List", {
-            cities: cityList,
-            pagination: {
-                total: totalCount,
-                page,
-                limit,
-                totalPages: Math.ceil(totalCount / limit),
-            },
-        }));
+        return res.status(200).json(new ApiResponse_1.ApiResponse(200, "City List", result));
     }
     catch (error) {
         console.error("Error:", error);

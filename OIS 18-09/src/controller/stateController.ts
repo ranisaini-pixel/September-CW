@@ -90,7 +90,6 @@ export const getStateList = async (
 ) => {
   try {
     const { page, limit = 10, searchTerm }: IPagination = req.query;
-    console.log(limit, "---------------------------");
 
     let filter: any = {};
     if (searchTerm) {
@@ -100,46 +99,63 @@ export const getStateList = async (
       };
     }
 
-    const totalCount = await stateModel.countDocuments(filter);
+    // const totalCount = await stateModel.countDocuments(filter);
+
+    // const stateList = await stateModel.aggregate([
+    //   {
+    //     $match: filter,
+    //   },
+    //   {
+    //     $skip: (page - 1) * limit,
+    //   },
+    //   {
+    //     $limit: limit,
+    //   },
+    //   {
+    //     $sort: {
+    //       createdAt: -1,
+    //     },
+    //   },
+    // ]);
 
     const stateList = await stateModel.aggregate([
       {
         $match: filter,
       },
       {
-        $skip: (page - 1) * limit,
-      },
-      {
-        $limit: limit,
-      },
-      {
-        $sort: {
-          createdAt: -1,
+        $facet: {
+          totalCount: [{ $count: "total" }],
+          paginatedResults: [
+            { $sort: { createdAt: -1 } },
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
+          ],
         },
       },
-      // {
-      //   $facet: {
-      //     metadata: [{ $count: "totalCount" }],
-      //     data: [{ $skip: (page - 1) * pageSize }, { $limit: pageSize }],
-      //   },
-      // },
+      {
+        $project: {
+          paginatedResults: 1,
+          totalDocs: {
+            $ifNull: [{ $arrayElemAt: ["$totalCount.totalDocs", 0] }, 0],
+          },
+        },
+      },
     ]);
 
     if (!stateList) {
       return next(new ApiError(400, "States not found"));
-    } else {
-      return res.status(200).json(
-        new ApiResponse(200, "States List", {
-          states: stateList,
-          pagination: {
-            total: totalCount,
-            page,
-            limit,
-            totalPages: Math.ceil(totalCount / limit),
-          },
-        })
-      );
     }
+    return res.status(200).json(
+      new ApiResponse(200, "States List", {
+        states: stateList[0].paginatedResults || { data: [], totalDocs: 0 },
+        pagination: {
+          totalDocs: stateList[0].totalDocs,
+          page,
+          limit,
+          totalPages: Math.ceil(stateList[0].totalDocs / limit),
+        },
+      })
+    );
   } catch (error: any) {
     console.log("Error:", error);
     next(error);
@@ -222,3 +238,5 @@ export const deleteState = async (
 function next(arg0: ApiError) {
   throw new Error("Function not implemented.");
 }
+
+// const result = stateList[0] || { data: [], total: 0 };

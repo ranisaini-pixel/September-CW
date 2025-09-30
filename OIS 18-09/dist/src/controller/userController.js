@@ -300,9 +300,12 @@ exports.logoutUser = logoutUser;
 const deleteUser = async (req, res, next) => {
     try {
         let _id = res.locals.user._id;
+        let user = await userModel_1.default.findById({ _id });
+        let addDeletedToEmail = user?.email + "_deleted_user";
         const deleted = await userModel_1.default.findByIdAndUpdate({ _id }, {
             $set: {
                 isDeleted: true,
+                email: addDeletedToEmail,
             },
         });
         if (!deleted) {

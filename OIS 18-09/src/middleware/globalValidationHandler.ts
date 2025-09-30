@@ -16,14 +16,15 @@ export const globalValidator = (
       //     code: 400,
       //     message: error.message,
       //   });
-      // }
+      // // }
 
       //this will replace previous value with the new value
       req[target] = value;
       // Object.assign(req[target], value);
-      console.log(value, "value");
 
       next();
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error", error);
+    }
   };
 };

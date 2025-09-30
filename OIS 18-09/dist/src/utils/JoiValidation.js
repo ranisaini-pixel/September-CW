@@ -218,6 +218,10 @@ exports.searchTearmValidation = Joi.object({
     searchTerm: Joi.string().trim().required().messages({
         "string.empty": "searchTearm is required",
     }),
+    limit: Joi.number().min(1).optional(),
+    page: Joi.number().min(1).required().messages({
+        "string.empty": "Page is required",
+    }),
 });
 exports.deleteStudentValidation = Joi.object({
     _id: Joi.string().hex().length(24).required().messages({
