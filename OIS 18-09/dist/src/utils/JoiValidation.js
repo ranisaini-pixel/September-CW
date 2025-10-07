@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.searchTearmValidation = exports.updateCSCValidation = exports.addCongregationValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
+exports.userAvailabilityValidation = exports.createCityValidation = exports.createStateValidation = exports.deleteCSCValidation = exports.getByIdValidation = exports.createCountryValidation = exports.deleteStudentValidation = exports.searchTearmValidation = exports.updateCSCValidation = exports.addCongregationValidation = exports.changePasswordValidation = exports.resetPasswordValidation = exports.updateUserValidation = exports.updateValidation = exports.OTPVerificationValidation = exports.sendOTPValidation = exports.loginUserValidation = exports.signupUserValidation = void 0;
 const Joi = require("joi");
 exports.signupUserValidation = Joi.object({
     firstName: Joi.string().trim().required().messages({
@@ -218,8 +218,8 @@ exports.searchTearmValidation = Joi.object({
     searchTerm: Joi.string().trim().required().messages({
         "string.empty": "searchTearm is required",
     }),
-    limit: Joi.number().min(1).optional(),
-    page: Joi.number().min(1).required().messages({
+    limit: Joi.number().min(1).max(100).optional(),
+    page: Joi.number().min(1).max(100).required().messages({
         "string.empty": "Page is required",
     }),
 });
@@ -263,11 +263,17 @@ exports.createCityValidation = Joi.object({
         "string.empty": "State Id is required",
     }),
 });
+exports.userAvailabilityValidation = Joi.object({
+    expiry: Joi.date().greater("now").required().messages({
+        "date.base": "expiry must be a valid date",
+        "date.greater": "expiry must be a future date",
+        "any.required": "expiry is required",
+    }),
+});
 // status: Joi.number()
 //   .valid(0, 1, 2)
 //   .optional()
 //   .messages({
-//     "number.base": "Status must be a number",
-//     "any.only": "Status must be 0 (pending), 1 (approved), or 2 (rejected)",
-//   }),
+//     "number.base": "Status must be a number",//     "any.only": "Status must be 0 (pending), 1 (approved), or 2 (rejected)",
+//   }), give an api for userAvailabilty to expire time by user enetered expiry
 //# sourceMappingURL=JoiValidation.js.map

@@ -7,7 +7,6 @@ class ApiResponse {
         this.message = message;
         this.data = data;
         this.success = statusCode < 400;
-        // console.log("Insie api response");
     }
 }
 exports.ApiResponse = ApiResponse;

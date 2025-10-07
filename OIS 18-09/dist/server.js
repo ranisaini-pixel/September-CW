@@ -7,6 +7,7 @@ const userRoute_1 = require("./src/routes/userRoute");
 const stateRoute_1 = require("./src/routes/stateRoute");
 const cityRoute_1 = require("./src/routes/cityRoute");
 const congregationRoute_1 = require("./src/routes/congregationRoute");
+const userAvailabiltyRoute_1 = require("./src/routes/userAvailabiltyRoute");
 const constant_1 = require("./constant");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -30,6 +31,7 @@ app.use("/user", userRoute_1.default);
 app.use("/state", stateRoute_1.default);
 app.use("/city", cityRoute_1.default);
 app.use("/congregation", congregationRoute_1.default);
+app.use("/userAvailability", userAvailabiltyRoute_1.default);
 // app.get("*", (req, res) => {
 //   return res
 //     .status(400)

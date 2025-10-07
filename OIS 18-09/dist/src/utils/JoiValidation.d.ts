@@ -16,4 +16,5 @@ export declare const getByIdValidation: Joi.ObjectSchema<any>;
 export declare const deleteCSCValidation: Joi.ObjectSchema<any>;
 export declare const createStateValidation: Joi.ObjectSchema<any>;
 export declare const createCityValidation: Joi.ObjectSchema<any>;
+export declare const userAvailabilityValidation: Joi.ObjectSchema<any>;
 //# sourceMappingURL=JoiValidation.d.ts.map

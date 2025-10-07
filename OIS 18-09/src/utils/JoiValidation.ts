@@ -253,8 +253,8 @@ export const searchTearmValidation = Joi.object({
   searchTerm: Joi.string().trim().required().messages({
     "string.empty": "searchTearm is required",
   }),
-  limit: Joi.number().min(1).optional(),
-  page: Joi.number().min(1).required().messages({
+  limit: Joi.number().min(1).max(100).optional(),
+  page: Joi.number().min(1).max(100).required().messages({
     "string.empty": "Page is required",
   }),
 });
@@ -305,10 +305,23 @@ export const createCityValidation = Joi.object({
   }),
 });
 
-// status: Joi.number()
-//   .valid(0, 1, 2)
-//   .optional()
-//   .messages({
-//     "number.base": "Status must be a number",
-//     "any.only": "Status must be 0 (pending), 1 (approved), or 2 (rejected)",
+// export const userAvailabilityValidation = Joi.object({
+//   expiry: Joi.date().greater("now").required().messages({
+//     "date.base": "expiry must be a valid date",
+//     "date.greater": "expiry must be a future date",
+//     "any.required": "expiry is required",
 //   }),
+// });
+
+export const userAvailabilityValidation = Joi.object({
+  expiry: Joi.alternatives()
+    .try(
+      Joi.string().pattern(/^([01]\d|2[0-3]):([0-5]\d)$/), // "14:30"
+      Joi.date() // "2025-10-07T14:30:00Z"
+    )
+    .required()
+    .messages({
+      "alternatives.match":
+        "Expiry must be either a valid time (HH:mm) or ISO date string.",
+    }),
+});

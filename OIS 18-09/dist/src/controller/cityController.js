@@ -45,6 +45,12 @@ const getCityList = async (req, res, next) => {
             page: Number(page),
             limit: Number(limit),
             searchTerm: searchTerm,
+            lookup: {
+                from: "states",
+                localField: "stateId",
+                foreignField: "_id",
+                as: "stateDetails",
+            },
         });
         if (!result.data.length) {
             return next(new ApiError_1.ApiError(404, "City not found"));

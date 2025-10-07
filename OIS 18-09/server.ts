@@ -5,9 +5,11 @@ import userRoute from "./src/routes/userRoute";
 import stateRoute from "./src/routes/stateRoute";
 import cityRoute from "./src/routes/cityRoute";
 import congregationRoute from "./src/routes/congregationRoute";
+import userAvailabilityRoute from "./src/routes/userAvailabiltyRoute";
 import { MONGO_URI } from "./constant";
 import * as dotenv from "dotenv";
 import * as cors from "cors";
+import { task } from "./src/cron/node-cron";
 import * as cookieparser from "cookie-parser";
 import globalErrorHandler from "./src/middleware/globalErrorHandler";
 
@@ -40,6 +42,7 @@ app.use("/user", userRoute);
 app.use("/state", stateRoute);
 app.use("/city", cityRoute);
 app.use("/congregation", congregationRoute);
+app.use("/userAvailability", userAvailabilityRoute);
 
 // app.get("*", (req, res) => {
 //   return res
@@ -50,6 +53,7 @@ app.use("/congregation", congregationRoute);
 // app.all("/*", (req, res, next) => {
 //   next(new ApiError(404, `This path ${req.originalUrl} isn't on this server!`));
 // });
+task.start();
 
 app.use(globalErrorHandler);
 

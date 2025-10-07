@@ -3,6 +3,14 @@ interface PaginationOptions {
     page?: number;
     limit?: number;
     searchTerm?: string;
+    searchField?: string;
+    lookup?: {
+        from: string;
+        localField: string;
+        foreignField: string;
+        as: string;
+        pipeline?: any[];
+    };
 }
 export declare const pagination: (model: Model<any>, options: PaginationOptions) => Promise<{
     data: any;

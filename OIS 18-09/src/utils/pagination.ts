@@ -4,12 +4,13 @@ interface PaginationOptions {
   page?: number;
   limit?: number;
   searchTerm?: string;
+  searchField?: string;
   lookup?: {
     from: string;
     localField: string;
     foreignField: string;
     as: string;
-    pipeline?: PipelineStage[];
+    pipeline?: any[];
   };
 }
 
@@ -17,14 +18,18 @@ export const pagination = async (
   model: Model<any>,
   options: PaginationOptions
 ) => {
-  const { page = 1, limit = 10, searchTerm, lookup } = options;
+  const {
+    page = 1,
+    limit = 10,
+    searchTerm,
+    searchField = "name",
+    lookup,
+  } = options;
 
+  // Build filter dynamically
   let filter: any = {};
   if (searchTerm) {
-    const search = searchTerm;
-    filter = {
-      name: { $regex: search, $options: "i" },
-    };
+    filter[searchField] = { $regex: searchTerm, $options: "i" };
   }
 
   const pipeline: PipelineStage[] = [{ $match: filter }];
@@ -36,10 +41,12 @@ export const pagination = async (
         localField: lookup.localField,
         foreignField: lookup.foreignField,
         as: lookup.as,
+        ...(lookup.pipeline ? { pipeline: lookup.pipeline } : {}),
       },
-    });
+    } as PipelineStage);
   }
 
+  // Facet for pagination
   pipeline.push(
     {
       $facet: {

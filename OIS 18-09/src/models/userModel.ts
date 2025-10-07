@@ -83,7 +83,7 @@ const userSchema: Schema<IUser> = new Schema(
   },
   {
     timestamps: true,
-    collection: "students",
+    collection: "users",
   }
 );
 
