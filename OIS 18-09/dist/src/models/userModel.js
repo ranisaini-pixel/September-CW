@@ -1,6 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
+var genderType;
+(function (genderType) {
+    genderType["male"] = "0";
+    genderType["female"] = "1";
+})(genderType || (genderType = {}));
+var roleType;
+(function (roleType) {
+    roleType["user"] = "0";
+    roleType["admin"] = "1";
+})(roleType || (roleType = {}));
 const userSchema = new mongoose_1.Schema({
     firstName: {
         type: String,
@@ -12,7 +22,7 @@ const userSchema = new mongoose_1.Schema({
     },
     gender: {
         type: String,
-        enum: ["0", "1", "2"], //0=male, 1=female, 2=other
+        enum: genderType,
         required: true,
     },
     email: {
@@ -44,8 +54,8 @@ const userSchema = new mongoose_1.Schema({
     },
     role: {
         type: String,
-        enum: ["0", "1"], //1=admin and 0=user,
-        default: "0",
+        enum: roleType,
+        default: roleType.user,
     },
     stateId: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -65,6 +75,7 @@ const userSchema = new mongoose_1.Schema({
 }, {
     timestamps: true,
     collection: "users",
+    versionKey: false,
 });
 const userModel = mongoose_1.default.model("users", userSchema);
 exports.default = userModel;

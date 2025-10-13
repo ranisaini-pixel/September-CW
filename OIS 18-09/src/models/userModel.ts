@@ -1,20 +1,30 @@
 import { boolean } from "joi";
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, ObjectId } from "mongoose";
+
+enum genderType {
+  male = "0",
+  female = "1",
+}
+
+enum roleType {
+  user = "0",
+  admin = "1",
+}
 
 export interface IUser extends Document {
   firstName: string;
   lastName: string;
-  gender: string;
+  gender: genderType;
   email: string;
   password: string;
   congregationName: string;
   otp: string;
   otpExpiration: Date;
   token: string;
-  role: string;
+  role: roleType;
   pinCode: string;
-  stateId: mongoose.Schema.Types.ObjectId;
-  cityId: mongoose.Schema.Types.ObjectId;
+  stateId: ObjectId;
+  cityId: ObjectId;
   isDeleted: boolean;
 }
 
@@ -30,7 +40,7 @@ const userSchema: Schema<IUser> = new Schema(
     },
     gender: {
       type: String,
-      enum: ["0", "1", "2"], //0=male, 1=female, 2=other
+      enum: genderType,
       required: true,
     },
     email: {
@@ -62,8 +72,8 @@ const userSchema: Schema<IUser> = new Schema(
     },
     role: {
       type: String,
-      enum: ["0", "1"], //1=admin and 0=user,
-      default: "0",
+      enum: roleType,
+      default: roleType.user,
     },
     stateId: {
       type: Schema.Types.ObjectId,
@@ -84,6 +94,7 @@ const userSchema: Schema<IUser> = new Schema(
   {
     timestamps: true,
     collection: "users",
+    versionKey: false,
   }
 );
 

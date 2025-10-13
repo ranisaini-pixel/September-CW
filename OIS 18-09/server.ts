@@ -6,6 +6,7 @@ import stateRoute from "./src/routes/stateRoute";
 import cityRoute from "./src/routes/cityRoute";
 import congregationRoute from "./src/routes/congregationRoute";
 import userAvailabilityRoute from "./src/routes/userAvailabiltyRoute";
+import userRequestRoute from "./src/routes/requestUserRoute";
 import { MONGO_URI } from "./constant";
 import * as dotenv from "dotenv";
 import * as cors from "cors";
@@ -43,6 +44,7 @@ app.use("/state", stateRoute);
 app.use("/city", cityRoute);
 app.use("/congregation", congregationRoute);
 app.use("/userAvailability", userAvailabilityRoute);
+app.use("/userRequest", userRequestRoute);
 
 // app.get("*", (req, res) => {
 //   return res

@@ -14,6 +14,7 @@ const userAvailabilitySchema = new mongoose_1.Schema({
 }, {
     timestamps: true,
     collection: "user_availabilities",
+    versionKey: false,
 });
 const userAvailabilityModel = mongoose_1.default.model("user_availabilities", userAvailabilitySchema);
 exports.default = userAvailabilityModel;

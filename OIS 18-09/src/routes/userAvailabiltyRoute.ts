@@ -1,9 +1,14 @@
 import { Router } from "express";
 import { globalValidator } from "../middleware/globalValidationHandler";
-import { userAvailability } from "../controller/userAvailabilityController";
-import { userAvailabilityValidation } from "../utils/JoiValidation";
+import {
+  getUserAvailabilityList,
+  userAvailability,
+} from "../controller/userAvailabilityController";
+import {
+  searchTearmValidation,
+  userAvailabilityValidation,
+} from "../utils/JoiValidation";
 import { verifyJWT } from "../middleware/jwtVerify";
-import { ApiError } from "../utils/ApiError";
 
 const router: Router = Router();
 
@@ -12,6 +17,12 @@ router.put(
   "/availability",
   globalValidator(userAvailabilityValidation, "body"),
   userAvailability
+);
+
+router.get(
+  "/getUserAvailabilityList",
+  globalValidator(searchTearmValidation, "query"),
+  getUserAvailabilityList
 );
 
 export default router;

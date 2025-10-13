@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ObjectSchema } from "joi";
+import { any, ObjectSchema } from "joi";
 
 type ValidationTarget = "body" | "query" | "params";
 
@@ -9,14 +9,9 @@ export const globalValidator = (
 ) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const value = await schema.validateAsync(req[target]);
-
-      // if (error) {
-      //   return res.status(400).json({
-      //     code: 400,
-      //     message: error.message,
-      //   });
-      // // }
+      const value = await schema.validateAsync(req[target], {
+        abortEarly: false,
+      });
 
       //this will replace previous value with the new value
       req[target] = value;
@@ -25,6 +20,12 @@ export const globalValidator = (
       next();
     } catch (error) {
       console.log("Error", error);
+      if (error)
+        return res.status(400).json({
+          code: 400,
+          message: "Validation failed",
+          errors: error,
+        });
     }
   };
 };

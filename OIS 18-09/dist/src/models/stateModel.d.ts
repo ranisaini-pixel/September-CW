@@ -1,7 +1,7 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 export interface IState extends Document {
     name: string;
-    countryId: mongoose.Schema.Types.ObjectId;
+    countryId: ObjectId;
 }
 declare const stateModel: mongoose.Model<IState, {}, {}, {}, mongoose.Document<unknown, {}, IState, {}, {}> & IState & Required<{
     _id: unknown;

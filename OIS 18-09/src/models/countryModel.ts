@@ -16,6 +16,7 @@ const countrySchema: Schema<ICountry> = new Schema(
   {
     timestamps: true,
     collection: "countries",
+    versionKey: false,
   }
 );
 

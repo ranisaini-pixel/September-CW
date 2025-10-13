@@ -8,9 +8,11 @@ const stateRoute_1 = require("./src/routes/stateRoute");
 const cityRoute_1 = require("./src/routes/cityRoute");
 const congregationRoute_1 = require("./src/routes/congregationRoute");
 const userAvailabiltyRoute_1 = require("./src/routes/userAvailabiltyRoute");
+const requestUserRoute_1 = require("./src/routes/requestUserRoute");
 const constant_1 = require("./constant");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const node_cron_1 = require("./src/cron/node-cron");
 const cookieparser = require("cookie-parser");
 const globalErrorHandler_1 = require("./src/middleware/globalErrorHandler");
 dotenv.config();
@@ -32,6 +34,7 @@ app.use("/state", stateRoute_1.default);
 app.use("/city", cityRoute_1.default);
 app.use("/congregation", congregationRoute_1.default);
 app.use("/userAvailability", userAvailabiltyRoute_1.default);
+app.use("/userRequest", requestUserRoute_1.default);
 // app.get("*", (req, res) => {
 //   return res
 //     .status(400)
@@ -40,6 +43,7 @@ app.use("/userAvailability", userAvailabiltyRoute_1.default);
 // app.all("/*", (req, res, next) => {
 //   next(new ApiError(404, `This path ${req.originalUrl} isn't on this server!`));
 // });
+node_cron_1.task.start();
 app.use(globalErrorHandler_1.default);
 mongoose_1.default
     .connect(constant_1.MONGO_URI)

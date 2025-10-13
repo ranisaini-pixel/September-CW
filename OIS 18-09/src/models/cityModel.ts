@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, ObjectId } from "mongoose";
 
 export interface ICity extends Document {
   name: string;
-  state: mongoose.Schema.Types.ObjectId;
+  state: ObjectId;
 }
 
 const citySchema: Schema<ICity> = new Schema(
@@ -22,6 +22,7 @@ const citySchema: Schema<ICity> = new Schema(
   {
     timestamps: true,
     collection: "cities",
+    versionKey: false,
   }
 );
 

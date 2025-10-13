@@ -3,7 +3,6 @@ interface PaginationOptions {
     page?: number;
     limit?: number;
     searchTerm?: string;
-    searchField?: string;
     lookup?: {
         from: string;
         localField: string;
@@ -13,13 +12,13 @@ interface PaginationOptions {
     };
 }
 export declare const pagination: (model: Model<any>, options: PaginationOptions) => Promise<{
-    data: any;
     pagination: {
         totalDocs: any;
         page: number;
         limit: number;
         totalPages: number;
     };
+    data: any;
 }>;
 export {};
 //# sourceMappingURL=pagination.d.ts.map

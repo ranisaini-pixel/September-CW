@@ -1,9 +1,9 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, ObjectId } from "mongoose";
 
 export interface ICongregation extends Document {
   congregationName: string;
-  congregationState: mongoose.Schema.Types.ObjectId;
-  congregationCity: mongoose.Schema.Types.ObjectId;
+  congregationState: ObjectId;
+  congregationCity: ObjectId;
   zipCode: string;
 }
 
@@ -33,6 +33,7 @@ const congregationSchema: Schema<ICongregation> = new Schema(
   {
     timestamps: true,
     collection: "congregations",
+    versionKey: false,
   }
 );
 

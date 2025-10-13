@@ -20,6 +20,7 @@ const userAvailabilitySchema: Schema<IUserAvailability> = new Schema(
   {
     timestamps: true,
     collection: "user_availabilities",
+    versionKey: false,
   }
 );
 

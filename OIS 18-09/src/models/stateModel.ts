@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, ObjectId } from "mongoose";
 
 export interface IState extends Document {
   name: string;
-  countryId: mongoose.Schema.Types.ObjectId;
+  countryId: ObjectId;
 }
 
 const stateSchema: Schema<IState> = new Schema(
@@ -22,6 +22,7 @@ const stateSchema: Schema<IState> = new Schema(
   {
     timestamps: true,
     collection: "states",
+    versionKey: false,
   }
 );
 

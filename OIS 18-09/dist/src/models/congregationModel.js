@@ -25,6 +25,7 @@ const congregationSchema = new mongoose_1.Schema({
 }, {
     timestamps: true,
     collection: "congregations",
+    versionKey: false,
 });
 const congregationModel = mongoose_1.default.model("congregations", congregationSchema);
 exports.default = congregationModel;
